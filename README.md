@@ -10,7 +10,7 @@
 - logs返回至消息服务器（springboot），传回至前端。
 - 前端使用Angular框架。
 
-
+![项目总体架构](pics/MetaFlink.png)
 
 
 #### 集群配置
@@ -26,17 +26,10 @@
     
 -  **模块配置** ：
 1.  Linux，gcc，java 请自行百度
-2.  redis
-3.  kafka
+2.  [redis文档](docs/redis.md)
+3.  [kafka文档](docs/kafka.md)
 
-# Highlights in DeePMD-kit v2.0
-* [Model compression](doc/freeze/compress.md). Accelerate the efficiency of model inference for 4-15 times.
-* [New descriptors](doc/model/overall.md). Including [`se_e2_r`](doc/model/train-se-e2-r.md) and [`se_e3`](doc/model/train-se-e3.md).
-* [Hybridization of descriptors](doc/model/train-hybrid.md). Hybrid descriptor constructed from concatenation of several descriptors.
-* [Atom type embedding](doc/model/train-se-e2-a-tebd.md). Enable atom type embedding to decline training complexity and refine performance.
-* Training and inference the dipole (vector) and polarizability (matrix).
-* Split of training and validation dataset.
-* Optimized training on GPUs. 
+
 
 #### 使用说明
 
