@@ -29,6 +29,14 @@
 2.  redis
 3.  kafka
 
+# Highlights in DeePMD-kit v2.0
+* [Model compression](doc/freeze/compress.md). Accelerate the efficiency of model inference for 4-15 times.
+* [New descriptors](doc/model/overall.md). Including [`se_e2_r`](doc/model/train-se-e2-r.md) and [`se_e3`](doc/model/train-se-e3.md).
+* [Hybridization of descriptors](doc/model/train-hybrid.md). Hybrid descriptor constructed from concatenation of several descriptors.
+* [Atom type embedding](doc/model/train-se-e2-a-tebd.md). Enable atom type embedding to decline training complexity and refine performance.
+* Training and inference the dipole (vector) and polarizability (matrix).
+* Split of training and validation dataset.
+* Optimized training on GPUs. 
 
 #### 使用说明
 
