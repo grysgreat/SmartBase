@@ -28,12 +28,27 @@
 1.  Linux，gcc，java 请自行百度
 2.  [redis文档](docs/redis.md)
 3.  [kafka文档](docs/kafka.md)
+4.  [flink文档](docs/flink.md)
 
 
 
 #### 使用说明
+1.  flink启动说明：
+    - 首先启动hdfs-yarn集群
 
-1.  xxxx
+```
+  cd /home/star/bin
+  ./myhadoop start
+```
+
+- Yarn模式启动flink集群-session模式——详细配置见：[flink文档](docs/flink.md)
+
+- ```
+  ./yarn-session.sh -nm test -d
+  ```
+
+
+
 2.  xxxx
 3.  xxxx
 
