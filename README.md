@@ -1,17 +1,34 @@
 # SmartBase
 
 #### 介绍
-基于flink-hdfs的异构数据处理平台。
+基于flink-hdfs的异构数据处理平台。支持，mysql,redis,kafka,hdfs,hbase等消息存储系统的多源异构数据转换，同时支持生成CSV，TXT等格式的处理结果。提供低代码的前端交互界面，用户通过配置方式上传任务至集群，任务结果通过平台可以可视化查看。
 
 #### 软件架构
-软件架构说明
+项目通过linux集群运行。
+- 任务处理架构为flink-yarn集群，通过yarn-session运行任务，slot可以按需使用，提高集群的资源利用率。同时配置高可用，Job-Manager可以与task-manager宕机时自动转换。
+- web项目交互搭建在Springboot框架上，使用kafka负载均衡集群作为任务上传与结果的消息队列。
+- logs返回至消息服务器（springboot），传回至前端。
+- 前端使用Angular框架。
 
 
-#### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+
+#### 集群配置
+-  **环境说明** ： 以下为项目运行所需环境，按以下配置不会出现版本兼容性问题。
+    - 集群：Linux-CentOS-3.10.0-862.el7.x86_64 * 3
+    - gcc： 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) 
+    - java：1.8.0_212
+    - redis：6.2.1
+    - kafka：2.13-3.1.0
+    - hadoop：3.1.3
+    - flink：1.13.2
+    - zookeeper: 3.5.7
+    
+-  **模块配置** ：
+1.  Linux，gcc，java 请自行百度
+2.  redis
+3.  kafka
+
 
 #### 使用说明
 
