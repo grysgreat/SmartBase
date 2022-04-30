@@ -24,12 +24,12 @@
     - flink：1.13.2
     - zookeeper: 3.5.7
     
--  **模块配置** ：
-1.  Linux，gcc，java 请自行百度
-2.  [redis文档](docs/redis.md)
-3.  [kafka文档](docs/kafka.md)
-4.  [flink文档](docs/flink.md)
-
+-  **模块配置** 
+    1.  Linux，gcc，java 请自行百度
+    2.  [redis文档](docs/redis.md)
+    3.  [kafka文档](docs/kafka.md)
+    4.  [flink文档](docs/flink.md)
+    5.  [mysql文档](docs/mysql.md)
 
 
 #### 使用说明
