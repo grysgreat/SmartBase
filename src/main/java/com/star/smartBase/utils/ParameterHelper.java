@@ -34,14 +34,16 @@ public class ParameterHelper {
     //数据源库名
     private String sorceBase;
 
-
     //数据源表名
     private String sourceTable;
 
-
+    //一般为kafka的topic名
+    private String destTopic;
 
     public ParameterHelper() {
     }
+
+
 
     //参数传递函数
     //TODO 传入一个 parameterTool ，返回helper参数类
@@ -69,6 +71,8 @@ public class ParameterHelper {
         this.sorceBase = parameterTool.get("sorceBase");
 
         this.sourceTable = parameterTool.get("sourceTable");
+
+        this.destTopic = parameterTool.get("destTopic");
     }
 
     @Override
@@ -171,5 +175,13 @@ public class ParameterHelper {
 
     public void setSourceTable(String sourceTable) {
         this.sourceTable = sourceTable;
+    }
+
+    public String getDestTopic() {
+        return destTopic;
+    }
+
+    public void setDestTopic(String destTopic) {
+        this.destTopic = destTopic;
     }
 }

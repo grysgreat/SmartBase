@@ -21,13 +21,14 @@ public class MysqlToText {
     public static void main(String[] args) throws Exception {
         //参数获取
         /** @Param
-         * --SorceIp:  mysql ip
-         * --SorcePort: 3306
-         * --DestUrl: fileSystem URL
-         * --SorceUserName mysql username
-         * --SorceUserPwd: mysql password
-         * --SorceBase: mysql BaseName
-         * --SourceTable: mysql TableName
+         * --sorceIp:  mysql ip
+         * --sorcePort: 3306
+         * --destUrl: where save URL
+         * --saveUrl： hdfsfileSystem savepoint URL
+         * --sorceUserName mysql username
+         * --sorceUserPwd: mysql password
+         * --sorceBase: mysql BaseName
+         * --sourceTable: mysql TableName
          */
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
 
@@ -66,7 +67,7 @@ public class MysqlToText {
         streamSource.writeAsText(parameterHelper.getDestUrl());
 
         //4.启动任务
-        env.execute("MysqlToText");
+        env.execute("Flink-MysqlToText");
 
     }
 

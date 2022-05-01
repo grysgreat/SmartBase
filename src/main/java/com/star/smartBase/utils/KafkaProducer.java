@@ -21,8 +21,8 @@ public class KafkaProducer {
     private static String brokers = "hadoop102:9092";
     private static String default_topic = "DWD_DEFAULT_TOPIC";
 
-    public static FlinkKafkaProducer<String> getKafkaProducer(String topic) {
-        return new FlinkKafkaProducer<String>(brokers,
+    public static FlinkKafkaProducer<String> getKafkaProducer(String topic,String url) {
+        return new FlinkKafkaProducer<String>(url,
                 topic,
                 new SimpleStringSchema());
     }
