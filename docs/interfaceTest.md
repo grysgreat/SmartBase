@@ -60,6 +60,14 @@
        
   ```
 
-![image-20220501161118170](../pics/test4.png)
+![image-20220501161118170](../pics/test6.jpg)
 
-一般是从properties开始的，挨个找参数 可能有数组情况 设定好类型就好
+并不是从以上的代码中获取相关的Parameter值
+注意从上图中进行编写
+其中
+- Verb 为请求方式 图中为 GET
+- Path Parameters 为请求字段 按对应apifox中的 Path参数
+- Query Parameters  为请求字段 对应apifox中的 Query参数
+
+一下为一个对应示例图
+![apifox新增接口界面](../pics/test7.jpg)
