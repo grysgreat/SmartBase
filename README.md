@@ -24,16 +24,31 @@
     - flink：1.13.2
     - zookeeper: 3.5.7
     
--  **模块配置** ：
-1.  Linux，gcc，java 请自行百度
-2.  [redis文档](docs/redis.md)
-3.  [kafka文档](docs/kafka.md)
-
+-  **模块配置** 
+    1.  Linux，gcc，java 请自行百度
+    2.  [redis文档](docs/redis.md)
+    3.  [kafka文档](docs/kafka.md)
+    4.  [flink文档](docs/flink.md)
+    5.  [mysql文档](docs/mysql.md)
 
 
 #### 使用说明
+1.  flink启动说明：
+    - 首先启动hdfs-yarn集群
 
-1.  xxxx
+```
+  cd /home/star/bin
+  ./myhadoop start
+```
+
+- Yarn模式启动flink集群-session模式——详细配置见：[flink文档](docs/flink.md)
+
+- ```
+  ./yarn-session.sh -nm test -d
+  ```
+
+
+
 2.  xxxx
 3.  xxxx
 
