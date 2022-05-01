@@ -68,3 +68,6 @@
 - Verb 为请求方式 图中为 GET
 - Path Parameters 为请求字段 按对应apifox中的 Path参数
 - Query Parameters  为请求字段 对应apifox中的 Query参数
+
+一下为一个对应示例图
+![apifox新增接口界面](../pics/test7.jpg)
