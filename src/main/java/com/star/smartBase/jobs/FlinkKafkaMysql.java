@@ -30,9 +30,6 @@ public class FlinkKafkaMysql {
         DataStream<String> stream = env
                 .addSource(consumer);
 
-        stream.addSink(
-
-        )
 
         DataStream<Tuple3<Integer, String, Integer>> sourceStream = stream.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value))
                 .map((MapFunction<String, Tuple3<Integer, String, Integer>>) value -> {
