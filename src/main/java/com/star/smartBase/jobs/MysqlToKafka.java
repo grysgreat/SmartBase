@@ -18,6 +18,10 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  * TODO 在使用kafka时，要在集群上开启zookeeper和kafka ——> zk.sh start | kf.sh start
  * TODO 数据流 : mysql -> flink -> kafka
  */
+
+/**
+ * TODO eg.  --sorceIp 192.168.10.1 --sorcePort 3306 --destUrl hadoop102:9092 --saveUrl hdfs://hadoop102:8020/rng/ck --sorceUserName root --sorceUserPwd 123456 --sorceBase test --destTopic kfMysql5
+ */
 public class MysqlToKafka {
     public static void main(String[] args) throws Exception {
         //参数获取

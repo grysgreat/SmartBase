@@ -16,6 +16,10 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  * @author star
  * TODO 数据流 : mysql -> flink -> hdfs
  */
+
+/**
+ * TODO eg.   --sorceIp 192.168.10.1 --sorcePort 3306 --destUrl hdfs://hadoop102:8020/rng/out100.txt --saveUrl hdfs://hadoop102:8020/rng/ck --sorceUserName root --sorceUserPwd 123456 --sorceBase test --sourceTable clicks
+ */
 public class MysqlToText {
 
     public static void main(String[] args) throws Exception {

@@ -2,6 +2,10 @@ package com.star.smartBase.utils;
 
 import org.apache.flink.api.java.utils.ParameterTool;
 
+/**
+ * @author star
+ */
+
 public class ParameterHelper {
 
     //数据源ip
@@ -40,6 +44,11 @@ public class ParameterHelper {
     //一般为kafka的topic名
     private String destTopic;
 
+    //一般为java包名
+    private String pakage;
+
+
+
     public ParameterHelper() {
     }
 
@@ -73,6 +82,8 @@ public class ParameterHelper {
         this.sourceTable = parameterTool.get("sourceTable");
 
         this.destTopic = parameterTool.get("destTopic");
+
+        this.pakage = parameterTool.get("pakage");
     }
 
     @Override
@@ -183,5 +194,13 @@ public class ParameterHelper {
 
     public void setDestTopic(String destTopic) {
         this.destTopic = destTopic;
+    }
+
+    public String getPakage() {
+        return pakage;
+    }
+
+    public void setPakage(String pakage) {
+        this.pakage = pakage;
     }
 }

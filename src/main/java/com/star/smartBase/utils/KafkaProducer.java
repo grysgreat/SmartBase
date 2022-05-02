@@ -38,12 +38,12 @@ public class KafkaProducer {
                 FlinkKafkaProducer.Semantic.EXACTLY_ONCE);
     }
 
-    public static FlinkKafkaConsumer<String> getKafkaConsumer(String topic, String groupId) {
+    public static FlinkKafkaConsumer<String> getKafkaConsumer(String topic, String groupId,String url) {
 
         Properties properties = new Properties();
 
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
 
         return new FlinkKafkaConsumer<String>(topic,
                 new SimpleStringSchema(),
