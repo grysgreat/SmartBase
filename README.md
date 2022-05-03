@@ -34,6 +34,24 @@
     5.  [mysql文档](docs/mysql.md)
 
 
+#### 功能概要
+-  **目前支持的功能有**
+    - restful传参执行任务
+    - 可视化界面（部分）- 增删查任务，动态加载，用户上传，页面编辑
+    - kafka->json
+    - kafka->mysql
+    - mysql->Java Class
+    - mysql->kafka
+    - mysql->localhost,hdfs(txt/csv) 
+    - 多mysql源->mysql 聚合同步
+    - redis->localhost,hdfs(txt/csv)
+
+- **待实现的功能有**
+    - 端口自定义数据源插入任意数据源
+    - redis聚合输出
+    - 仪表盘
+
+
 #### 使用说明
 1.  flink启动说明：
     - 首先启动hdfs-yarn集群
