@@ -8,7 +8,9 @@
 - 任务处理架构为flink-yarn集群，通过yarn-session运行任务，slot可以按需使用，提高集群的资源利用率。同时配置高可用，Job-Manager可以与task-manager宕机时自动转换。
 - web项目交互搭建在Springboot框架上，使用kafka负载均衡集群作为任务上传与结果的消息队列。
 - logs返回至消息服务器（springboot），传回至前端。
+    - [springboot链接](https://gitee.com/StarGrys/smart-base)
 - 前端使用Angular框架。
+    - [前端链接](https://gitee.com/det0cte/smart-base-web-dashborad)
 
 ![项目总体架构](pics/MetaFlink2.png)
 
