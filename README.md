@@ -48,9 +48,11 @@
   ```
 
 
+#### 开发者说明
+-  **模块配置** 
+    1.  [Flink内部传参文档](docs/Parameter.md)
+    1.  [ApiFox请求接口文档](docs/interfaceTest.md)
 
-2.  xxxx
-3.  xxxx
 
 #### 参与贡献
 
