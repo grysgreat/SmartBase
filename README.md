@@ -10,7 +10,7 @@
 - logs返回至消息服务器（springboot），传回至前端。
 - 前端使用Angular框架。
 
-![项目总体架构](pics/MetaFlink.png)
+![项目总体架构](pics/MetaFlink2.png)
 
 
 #### 集群配置
