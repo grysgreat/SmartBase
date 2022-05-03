@@ -1,5 +1,6 @@
 # SmartBase
 
+![logo](pics/logo1.png)
 ## 🚀 介绍
 基于flink-hdfs的异构数据处理平台。支持，mysql,redis,kafka,hdfs,hbase等消息存储系统的多源异构数据转换，同时支持生成CSV，TXT等格式的处理结果。提供低代码的前端交互界面，用户通过配置方式上传任务至集群，任务结果通过平台可以可视化查看。
 
