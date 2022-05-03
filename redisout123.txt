@@ -1,0 +1,1 @@
+MyRedisRecord{data={aac=5, aab=1, star=100, star2=10012, Ali=2}, redisDataType=HASH}

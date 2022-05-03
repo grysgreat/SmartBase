@@ -1,8 +1,7 @@
-package com.star.smartBase.sinkFunctions;
+package com.star.smartBase.sinkSourceFunctions;
 
 import com.star.smartBase.utils.MysqlTableUtil;
 import org.apache.flink.api.common.ExecutionConfig;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 
@@ -13,19 +12,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.List;
 
-
-/**
- * 这是kafka->Mysql的sink函数类
- *
- * 从Mysql读取元数据，然后通过表名获取字段名和字段类型,然后补充sql，填充从json获取的值
- */
-public class MysqlSink extends
+public class testSink extends
         RichSinkFunction<String[]> implements Serializable {
     private Connection connection;
     private PreparedStatement preparedStatement;
     private MysqlTableUtil mysqlTableUtil=new MysqlTableUtil();
     private String username = "root";
-    private String password ;
+    private String password = "123456";
     private static String drivername = "com.mysql.jdbc.Driver";   //配置改成自己的配置
     private String dburl = "jdbc:mysql://localhost:3306";
     private String tableName = "clicks";
@@ -33,7 +26,7 @@ public class MysqlSink extends
 
     private List<String> ColumnNames;
     private List<String> ColumnTypes;
-    public MysqlSink() {
+    public testSink() {
     }
 
     @Override
@@ -94,7 +87,7 @@ public class MysqlSink extends
                 this.preparedStatement.setInt(i+1, Integer.parseInt(value[i]));
             }
 
-            // this.preparedStatement.setInt(i, value[i]);
+           // this.preparedStatement.setInt(i, value[i]);
         }
 
         this.preparedStatement.executeUpdate();

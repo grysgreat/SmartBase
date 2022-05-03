@@ -38,7 +38,7 @@ public class ParameterHelper {
     //数据源库名
     private String sorceBase;
 
-    //数据源表名
+    //数据源表名，或key名
     private String sourceTable;
 
     //一般为kafka的topic名
