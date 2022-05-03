@@ -1,3 +1,4 @@
+
 # 关于参数传递
 ## 帮助类
 详情见 com/star/smartBase/utils/ParameterHelper.java
