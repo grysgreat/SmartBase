@@ -1,46 +1,59 @@
 package com.star.smartBase.jobs;
 
-import com.alibaba.ververica.cdc.connectors.mysql.MySQLSource;
-import com.alibaba.ververica.cdc.connectors.mysql.table.StartupOptions;
-import com.alibaba.ververica.cdc.debezium.DebeziumSourceFunction;
-import com.star.smartBase.model.CustomerDeserialization;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import com.star.smartBase.sinkFunctions.MysqlSink;
+import com.star.smartBase.sinkFunctions.testSink;
+import org.apache.commons.lang.StringUtils;
+import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.restartstrategy.RestartStrategies;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.common.typeinfo.TypeHint;
+import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+
+
+import java.util.ArrayList;
+import java.util.Properties;
 
 public class test {
+
     public static void main(String[] args) throws Exception {
-        //1.获取执行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
+        Properties properties = new Properties();
+        properties.setProperty("bootstrap.servers", "hadoop102:9092");
 
-        //1.1 开启CK并指定状态后端为FS    memory  fs  rocksdb
-//        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/testCDC"));
-//        env.enableCheckpointing(5000L);
-//        env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
-//        env.getCheckpointConfig().setCheckpointTimeout(10000L);
-//        env.getCheckpointConfig().setMaxConcurrentCheckpoints(2);
-//        env.getCheckpointConfig().setMinPauseBetweenCheckpoints(3000);
+        //TODO 参数传递-- mysql 库名，表名，
+        Configuration conf = new Configuration();
+        conf.setString("baseName","test");
+        conf.setString("tableName","clicks");
+        conf.setString("username","root");
+        conf.setString("password","123456");
+        conf.setString("dburl","localhost:3306");
+        env.getConfig().setGlobalJobParameters(conf);
 
-        //2.通过FlinkCDC构建SourceFunction并读取数据
-        DebeziumSourceFunction<String> sourceFunction = MySQLSource.<String>builder()
-                .hostname("192.168.10.1")
-                .serverTimeZone("GMT")
-                .port(3306)
-                .username("root")
-                .password("123456")
-                .databaseList("test")
-                .tableList("test.clicks")   //如果不添加该参数,则消费指定数据库中所有表的数据.如果指定,指定方式为db.table
-                .deserializer(new CustomerDeserialization())
-                .startupOptions(StartupOptions.initial())
-                .build();
-        DataStreamSource<String> streamSource = env.addSource(sourceFunction);
 
-        //3.打印数据
-        streamSource.print();
-     //   streamSource.writeAsText("hdfs://hadoop102:8020/Out/out13.txt");
+        // 1,abc,100  类似这样的数据，当然也可以是很复杂的json数据，去做解析
+        FlinkKafkaConsumer<String> consumer = new FlinkKafkaConsumer<>("test", new SimpleStringSchema(), properties);
 
-        //4.启动任务
-        env.execute("MysqlToText");
+        env.getConfig().setRestartStrategy(
+                RestartStrategies.fixedDelayRestart(5, 5000));
+        env.enableCheckpointing(2000);
+        DataStream<String> stream = env
+                .addSource(consumer);
 
+        DataStream<String[]> sourceStream = stream.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value))
+                .map((MapFunction<String, String[]>) value -> {
+                    String[] args1 = value.split(","); //切割json
+                    return args1;
+                }).returns(new TypeHint<String[]>() {});
+
+
+        sourceStream.addSink(new testSink());
+        env.execute("data to mysql start");
     }
+
+
 }

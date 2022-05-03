@@ -17,6 +17,7 @@ public class MysqlToClass {
         //参数获取
         /** @Param
          * --sorceIp:  mysql ip
+         * --sorcePort 3306
          * --destUrl: where to save URL
          * --sorceUserName mysql username
          * --sorceUserPwd: mysql password
