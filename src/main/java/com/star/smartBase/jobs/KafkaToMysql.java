@@ -22,9 +22,9 @@ import java.util.Properties;
 //TODO 数据流： kafka（json） -> flink(List):mysqlUtil,sink -> Mysql
 
 /**
- * TODO eg.  --sorceIp 192.168.10.1 --destUrl hadoop102:9092 --saveUrl hdfs://hadoop102:8020/rng/ck --sorceUserName root --sorceUserPwd 123456 --sorceBase test --destTopic test --sourceTable clicks
+ * TODO eg.  --sorceIp 192.168.10.1 --destUrl hadoop102:9092 --saveUrl hdfs://hadoop102:8020/rng/ck --sorceUserName root --sorceUserPwd 123456 --sorceBase sys --destTopic kfMysql5 --sourceTable clicks
  */
-public class KafkaToaMysql {
+public class KafkaToMysql {
 
     public static void main(String[] args) throws Exception {
 

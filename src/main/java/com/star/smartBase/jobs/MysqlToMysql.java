@@ -1,9 +1,9 @@
 package com.star.smartBase.jobs;
 
+
 import com.alibaba.ververica.cdc.connectors.mysql.MySQLSource;
 import com.alibaba.ververica.cdc.connectors.mysql.table.StartupOptions;
 import com.alibaba.ververica.cdc.debezium.DebeziumSourceFunction;
-import com.star.smartBase.model.CustomerDeserialization;
 import com.star.smartBase.model.MysqlRawDataDeserialization;
 import com.star.smartBase.utils.KafkaProducer;
 import com.star.smartBase.utils.ParameterHelper;
@@ -14,16 +14,18 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 /**
- * @author star
+ * TODO 实现用于任意个mysql表的多对一的同步功能  对每一个源表开启此任务将数据同步到kafka上，然后开启KafkaToMysql将kafka上的同步信息同步给目标数据库
+ * !!!! 多个连接的kafka源必须相同
  *
  * TODO 在使用kafka时，要在集群上开启zookeeper和kafka ——> zk.sh start | kf.sh start
- * TODO 数据流 : mysql -> flink -> kafka
- */
-
-/**
+   TODO 数据流 : mysql -> flink -> kafka -> flink ->mysql
  * TODO eg.  --sorceIp 192.168.10.1 --sorcePort 3306 --destUrl hadoop102:9092 --saveUrl hdfs://hadoop102:8020/rng/ck --sorceUserName root --sorceUserPwd 123456 --sorceBase test --destTopic kfMysql5 --sourceTable clicks
  */
-public class test {
+public class MysqlToMysql {
+    /**
+     * 此功能由此类和KafkaToMysql功能实现，在开启本类的同时开启KafkaToMysql即可
+     */
+
     public static void main(String[] args) throws Exception {
         //参数获取
         /** @Param
@@ -77,7 +79,8 @@ public class test {
         streamSource.addSink(KafkaProducer.getKafkaProducer(sinkTopic,destUrl));
 
         //4.启动任务
-        env.execute("Flink-MysqlToKafka");
+        env.execute("Flink-MysqlToMysql");
     }
+
 
 }
