@@ -46,7 +46,7 @@ public class RedisSource extends RichSourceFunction<MyRedisRecord>{
 
     @Override
     public void close() throws Exception {
-        super.close();
+//        super.close();
     }
 
     @Override

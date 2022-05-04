@@ -1,107 +1,69 @@
-package com.star.smartBase.sinkSourceFunctions;
+package ryx.source;
 
-import com.star.smartBase.utils.MysqlTableUtil;
-import org.apache.flink.api.common.ExecutionConfig;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
+import org.apache.flink.streaming.api.functions.source.SourceFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
-
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.util.List;
-
-public class testSink extends
-        RichSinkFunction<String[]> implements Serializable {
-    private Connection connection;
-    private PreparedStatement preparedStatement;
-    private MysqlTableUtil mysqlTableUtil=new MysqlTableUtil();
-    private String username = "root";
-    private String password = "123456";
-    private static String drivername = "com.mysql.jdbc.Driver";   //配置改成自己的配置
-    private String dburl = "jdbc:mysql://localhost:3306";
-    private String tableName = "clicks";
-    private String baseName = "test1";
-
-    private List<String> ColumnNames;
-    private List<String> ColumnTypes;
-    public testSink() {
-    }
-
-    @Override
-    public void open(Configuration parameters) throws Exception {
-        super.open(parameters);
-        //获取全局变量 也就是
-        ExecutionConfig.GlobalJobParameters globalParams = getRuntimeContext().getExecutionConfig().getGlobalJobParameters();
-        Configuration globConf = (Configuration) globalParams;
-
-        //获取数据库配置
-        username=globConf.getString("username", null);
-        password=globConf.getString("password", null);
-        dburl=globConf.getString("dburl", null);
-        tableName=globConf.getString("tableName", null);
-        baseName=globConf.getString("baseName", null);
-
-        //数据库util传参
-        mysqlTableUtil.setURL("jdbc:mysql://"+dburl+"/"+baseName+"?useUnicode=true&characterEncoding=utf8");
-        mysqlTableUtil.setUSERNAME(username);
-        mysqlTableUtil.setPASSWORD(password);
-
-        //获取表名对应的字段名和字段类型
-        ColumnNames = mysqlTableUtil.getColumnNames(tableName);
-        ColumnTypes = mysqlTableUtil.getColumnTypes(tableName);
-
-        //初始化jdbc
-        Class.forName(drivername);
-        connection = DriverManager.getConnection("jdbc:mysql://"+dburl+"/"+baseName, username, password);
-    }
+import javax.swing.plaf.TableHeaderUI;
+import java.util.HashMap;
+import java.util.Map;
 
 
-    @Override
-    public void invoke(String[] value) throws Exception {
-        Class.forName(drivername);
-        String tupleName="(";
-        String unKown="(";
-
-        //拼接sql
-        for (String columnName : ColumnNames) {
-            tupleName+=columnName+",";
-            unKown+="?"+",";
-        }
-        tupleName = tupleName.substring(0, tupleName.length()-1)+")";
-        unKown = unKown.substring(0, unKown.length()-1)+")";
-
-        String sql = "insert into "+tableName+tupleName+" values"+unKown; //拼接好的预执行sql
-
-        this.preparedStatement = this.connection.prepareStatement(sql);
-
-        System.out.println(ColumnTypes);
-
-
-        for (int i = 0; i < value.length; i++) {
-
-            if(ColumnTypes.get(i)=="VARCHAR"){
-                this.preparedStatement.setString(i+1, value[i]);
-            } else {
-                this.preparedStatement.setInt(i+1, Integer.parseInt(value[i]));
+/**
+ *
+ * 在redis中保存的有国家和大区的关系
+ * hset  areas AREA_US US
+ * hset  areas AREA_CT TW,HK
+ * hset  areas AREA_AR PK,KW,SA
+ * hset  areas AREA_IN IN
+ *./bin/kafka-console-consumer.sh --bootstrap-server hadoop01:9092,hadoop02:9092,hadoop03:9092 --topic allDataClean--from-beginning
+ *
+ * 我们需要返回kv对的，就要考虑HashMap
+ */
+public class testSink implements SourceFunction<HashMap<String,String>> {
+    private Logger logger= LoggerFactory.getLogger(testSink.class);
+    private boolean isRunning =true;
+    private Jedis jedis=null;
+    private final long SLEEP_MILLION=5000;
+    public void run(SourceContext<HashMap<String, String>> ctx) throws Exception {
+        this.jedis = new Jedis("hadoop102", 6379);
+        HashMap<String, String> kVMap = new HashMap<String, String>();
+        while(isRunning){
+            try{
+                kVMap.clear();
+                Map<String, String> areas = jedis.hgetAll("click4");
+                for(Map.Entry<String,String> entry:areas.entrySet()){
+                    // key :大区 value：国家
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    String[] splits = value.split(",");
+                    System.out.println("key:"+key+"，--value："+value);
+                    for (String split:splits){
+                        // key :国家value：大区
+                        kVMap.put(split, key);
+                    }
+                }
+                if(kVMap.size()>0){
+                    ctx.collect(kVMap);
+                }else {
+                    logger.warn("从redis中获取的数据为空");
+                }
+                Thread.sleep(SLEEP_MILLION);
+            }catch (JedisConnectionException e){
+                logger.warn("redis连接异常，需要重新连接",e.getCause());
+                jedis = new Jedis("hadoop102", 6379);
+            }catch (Exception e){
+                logger.warn(" source 数据源异常",e.getCause());
             }
-
-           // this.preparedStatement.setInt(i, value[i]);
         }
-
-        this.preparedStatement.executeUpdate();
-
     }
 
-    @Override
-    public void close() throws Exception {
-        if (this.preparedStatement != null) {
-            this.preparedStatement.close();
+    public void cancel() {
+        isRunning=false;
+        while(jedis!=null){
+            jedis.close();
         }
-        if (this.connection != null) {
-            this.connection.close();
-        }
-        super.close();
     }
 }

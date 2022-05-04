@@ -27,22 +27,25 @@ import org.apache.flink.streaming.connectors.redis.common.mapper.RedisMapper;
 import java.util.Properties;
 
 
-//TODO 数据流： 自定义socket输出源 -> flink(List):mysqlUtil,sink -> Mysql
+//TODO 数据流： 自定义socket输出源 -> flink(String):sink -> redis
 
-//可以自定义输入数据格式
+//可以自定义输入数据格式(暂时不行)
 
 /**
- * TODO eg.  --sorceIp hadoop102 --sorcePort 7777 --destUrl hadoop102:9092 --destTopic portT --saveUrl --saveUrl hdfs://hadoop102:8020/rng/ck
+ * TODO eg.  --sorceIp hadoop102 --sorcePort 7777 --destUrl hadoop102 --destPort 6379 --destTopic clicks8 --saveUrl hdfs://hadoop102:8020/rng/ck
  */
-public class test2 {
+public class PortToRedis {
+
+    public static String topic;
     public static void main(String[] args) throws Exception {
         //参数获取
         /** @Param
          * --sorceIp:  Port ip
          * --sorcePort: Port
-         * --destUrl: kafka URL
+         * --destUrl: redis URL
+         * --destPort redis port
          * --saveUrl： hdfs fileSystem savepoint URL
-         * --destTopic: kafka topic
+         * --destTopic: redis key field
          */
 
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
@@ -59,6 +62,7 @@ public class test2 {
         env.getCheckpointConfig().setMaxConcurrentCheckpoints(2);
         env.getCheckpointConfig().setMinPauseBetweenCheckpoints(3000);
 
+        topic=parameterHelper.getDestTopic();
 
 
         DataStream<String> stream = env.socketTextStream(parameterHelper.getSorceIp(),parameterHelper.getSorcePort());
@@ -75,7 +79,7 @@ public class test2 {
         sourceStream.print();
 
         // 创建一个到redis连接的配置
-        FlinkJedisPoolConfig conf = new FlinkJedisPoolConfig.Builder().setHost("hadoop102").setPort(6379).build();
+        FlinkJedisPoolConfig conf = new FlinkJedisPoolConfig.Builder().setHost(parameterHelper.getDestUrl()).setPort(parameterHelper.getDestPort()).build();
 
         sourceStream.addSink(new RedisSink<Tuple2<String,String>>(conf, new MyRedisMapper()));
 
@@ -96,8 +100,7 @@ public class test2 {
 
         @Override
         public RedisCommandDescription getCommandDescription() {
-
-            return new RedisCommandDescription(RedisCommand.HSET, "clicks7");
+            return new RedisCommandDescription(RedisCommand.HSET, topic);
         }
 
     }
