@@ -22,7 +22,7 @@
 
 #### 2️⃣ Universal-pipe
 
-`pipe` 是水管的意思，`Universal-pipe` 的定位是一个数据抽取的处理集群，基于 `Hadoop`，`Yarn`等对于`streamx-core` 中提供的各种，数据源开发，目的是打造一个稳定高效的数据处理终端集群，并且集成到 `streamx-console` 中，解决实时数据源获取问题。
+`pipe` 是水管的意思，`Universal-pipe` 的定位是一个数据抽取的处理集群，基于 `Hadoop`，`Yarn`等对于`flink-core` 中提供的各种，数据源开发，目的是打造一个稳定高效的数据处理终端集群，并且集成到 `smartBase-console` 中，解决实时数据源获取问题。
 
 #### 3️⃣ smartBase-console
 
