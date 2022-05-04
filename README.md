@@ -73,9 +73,13 @@
     - mysql->localhost,hdfs(txt/csv) 
     - 多mysql源->mysql 聚合同步
     - redis->localhost,hdfs(txt/csv)
+    - 自定义端口数据固定格式传输：
+    - port->mysql
+    - port->kafka
+    - port->localhost,hdfs(txt/csv)
 
 - **待实现的功能有**
-    - 端口自定义数据源插入任意数据源
+    - 自定义异构数据源传输
     - redis聚合输出
     - Hbase支持
     - 仪表盘
