@@ -78,6 +78,8 @@
     - `port`->`kafka`
     - `port`->`redis`
     - `port`->`localhost`,`hdfs`(txt/csv)
+    - 自定义端口数据自定义json传输：只需开启一个任务即可完成传输至任意数据源（通过配置json参数）
+    - `port`->`Any!`
 
 - **待实现的功能有**
     - 自定义异构数据源传输
