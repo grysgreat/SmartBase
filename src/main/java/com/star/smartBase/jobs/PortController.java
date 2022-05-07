@@ -6,9 +6,7 @@ import com.star.smartBase.Interface.MysqlConnPool;
 import com.star.smartBase.sinkSourceFunctions.JsonMapFunc;
 import com.star.smartBase.sinkSourceFunctions.JsonSinkFunc;
 import com.star.smartBase.sinkSourceFunctions.MysqlSink;
-import com.star.smartBase.utils.DestObj;
-import com.star.smartBase.utils.KafkaProducer;
-import com.star.smartBase.utils.ParameterHelper;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.flink.api.common.functions.FilterFunction;
@@ -51,8 +49,8 @@ public class PortController {
 
 
 
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-        ParameterHelper parameterHelper = new ParameterHelper(parameterTool);
+//        ParameterTool parameterTool = ParameterTool.fromArgs(args);
+//        ParameterHelper parameterHelper = new ParameterHelper(parameterTool);
 
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -78,6 +76,6 @@ public class PortController {
                 .returns(new TypeHint<Map<String,Object>>() {})
                 .addSink(new JsonSinkFunc());
         //4.启动任务
-        env.execute("Flink-PortToKafka");
+        env.execute("Flink-portToAll");
     }
 }

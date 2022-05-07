@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
     private static String drivername = "com.mysql.jdbc.Driver";
     private MysqlTableUtil mysqlTableUtil=new MysqlTableUtil();
     private PreparedStatement preparedStatement;
-
+    private DriverManager driverManager;
     private Connection connection;
 
 
@@ -71,16 +72,31 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
             case "mysql":{
                 MysqlConnPool pool = MysqlConnPool.INSTANCE;
                 String name=value.get("url")+"_"+value.get("baseName")+"_"+value.get("tableName");
+                Date nowTime = new Date(System.currentTimeMillis());
 
                 if(pool.getInstance().containsKey(name)) {
-                    connection=pool.getInstance().get(name);
+                    Date lastTime = pool.getTimeStamps().get(name);
+                    int dt = (int) ((nowTime.getTime() - lastTime.getTime()) / 1000);
+                    if(dt>=600) {
+                        driverManager.setLoginTimeout(600);
+                        connection = driverManager.getConnection(
+                                "jdbc:mysql://" + value.get("url") + "/" + value.get("baseName"),
+                                (String) value.get("userName"),
+                                (String) value.get("passWord")
+                        );
+                        pool.setConn(name,connection,nowTime);
+                    } else {
+                        connection=pool.getInstance().get(name);
+                    }
+
                 } else {
-                    connection = DriverManager.getConnection(
+                    driverManager.setLoginTimeout(600);
+                    connection = driverManager.getConnection(
                             "jdbc:mysql://" + value.get("url") + "/" + value.get("baseName"),
                             (String) value.get("userName"),
                             (String) value.get("passWord")
                     );
-                    pool.setConn(name,connection);
+                    pool.setConn(name,connection,nowTime);
                 }
                 Class.forName(drivername);
                 String tupleName="(";
