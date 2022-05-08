@@ -31,7 +31,8 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
     private PreparedStatement preparedStatement;
     private DriverManager driverManager;
     private Connection connection;
-
+    private List<String> ColumnNames;
+    private List<String> ColumnTypes;
 
     @Override
     public void open(Configuration parameters) throws Exception {
@@ -63,10 +64,6 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
         mysqlTableUtil.setUSERNAME((String)value.get("userName"));
         mysqlTableUtil.setPASSWORD((String)value.get("passWord"));
 
-        List<String> ColumnNames= mysqlTableUtil.getColumnNames((String)value.get("tableName"));;
-        List<String> ColumnTypes= mysqlTableUtil.getColumnTypes((String)value.get("tableName"));;
-
-
         //使用单例模式建立连接池
         switch (destName){
             case "mysql":{
@@ -74,7 +71,7 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
                 String name=value.get("url")+"_"+value.get("baseName")+"_"+value.get("tableName");
                 Date nowTime = new Date(System.currentTimeMillis());
 
-                if(pool.getInstance().containsKey(name)) {
+                if(pool.getConn().containsKey(name)) {
                     Date lastTime = pool.getTimeStamps().get(name);
                     int dt = (int) ((nowTime.getTime() - lastTime.getTime()) / 1000);
                     if(dt>=600) {
@@ -84,9 +81,14 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
                                 (String) value.get("userName"),
                                 (String) value.get("passWord")
                         );
-                        pool.setConn(name,connection,nowTime);
+                        ColumnNames= mysqlTableUtil.getColumnNames((String)value.get("tableName"));
+                        ColumnTypes= mysqlTableUtil.getColumnTypes((String)value.get("tableName"));
+                        pool.setConn(name,connection,nowTime,ColumnNames,ColumnTypes);
                     } else {
-                        connection=pool.getInstance().get(name);
+
+                        connection=pool.getConn().get(name);
+                        ColumnNames=pool.getColumnNames().get(name);
+                        ColumnTypes=pool.getColumnTypes().get(name);
                     }
 
                 } else {
@@ -96,7 +98,9 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
                             (String) value.get("userName"),
                             (String) value.get("passWord")
                     );
-                    pool.setConn(name,connection,nowTime);
+                    ColumnNames= mysqlTableUtil.getColumnNames((String)value.get("tableName"));
+                    ColumnTypes= mysqlTableUtil.getColumnTypes((String)value.get("tableName"));
+                    pool.setConn(name,connection,nowTime,ColumnNames,ColumnTypes);
                 }
                 Class.forName(drivername);
                 String tupleName="(";
@@ -113,9 +117,6 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
                 String sql = "insert into "+(String)value.get("tableName")+tupleName+" values"+unKown; //拼接好的预执行sql
 
                 this.preparedStatement = connection.prepareStatement(sql);
-
-                System.out.println(ColumnTypes);
-
 
                 for (int i = 0; i < data.length; i++) {
                     System.out.println(data[i]);
