@@ -35,6 +35,8 @@ public class MysqlSink extends
     public MysqlSink() {
     }
 
+
+    
     @Override
     public void open(Configuration parameters) throws Exception {
         super.open(parameters);

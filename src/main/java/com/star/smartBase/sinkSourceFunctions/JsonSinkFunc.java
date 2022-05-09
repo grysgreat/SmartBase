@@ -6,16 +6,16 @@ import com.star.smartBase.utils.MysqlTableUtil;
 import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
 
 
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -56,9 +56,6 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
     public void invoke(Map<String,Object> value) throws Exception {
         String destName=(String) value.get("destName");
 
-        String[] data = ((ArrayList<String>) value.get("data")).toArray(new String[((ArrayList<String>) value.get("data")).size()]);
-
-
         //数据库util传参
         mysqlTableUtil.setURL("jdbc:mysql://"+value.get("url")+"/"+value.get("baseName")+"?useUnicode=true&characterEncoding=utf8");
         mysqlTableUtil.setUSERNAME((String)value.get("userName"));
@@ -67,6 +64,8 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
         //使用单例模式建立连接池
         switch (destName){
             case "mysql":{
+                String[] structData = ((ArrayList<String>) value.get("data")).toArray(new String[((ArrayList<String>) value.get("data")).size()]);
+
                 MysqlConnPool pool = MysqlConnPool.INSTANCE;
                 String name=value.get("url")+"_"+value.get("baseName")+"_"+value.get("tableName");
                 Date nowTime = new Date(System.currentTimeMillis());
@@ -118,12 +117,12 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
 
                 this.preparedStatement = connection.prepareStatement(sql);
 
-                for (int i = 0; i < data.length; i++) {
-                    System.out.println(data[i]);
+                for (int i = 0; i < structData.length; i++) {
+                    System.out.println(structData[i]);
                     if(ColumnTypes.get(i)=="VARCHAR"){
-                        this.preparedStatement.setString(i+1, data[i]);
+                        this.preparedStatement.setString(i+1, structData[i]);
                     } else {
-                        this.preparedStatement.setInt(i+1, Integer.parseInt(data[i]));
+                        this.preparedStatement.setInt(i+1, Integer.parseInt(structData[i]));
                     }
 
                     // this.preparedStatement.setInt(i, value[i]);
@@ -131,9 +130,24 @@ public class JsonSinkFunc extends RichSinkFunction<Map<String,Object>> implement
 
                 this.preparedStatement.executeUpdate();
             };
+            case "kafka": {
 
+                String streamData = (String) value.get("sdata");
+                //获取配置信息
+                String url=(String) value.get("url");
+                String topic=(String) value.get("topic");
 
-            case "kafka": ;
+                //创建kafka执行程序
+                Properties prop = new Properties();
+                prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,url);
+                prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+                prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+                KafkaProducer<String, String> producer = new KafkaProducer<>(prop);
+                ProducerRecord<String, String> record = new ProducerRecord<>(topic, streamData);
+                producer.send(record);
+                System.out.println("successKafka");
+                producer.close();
+            };
         }
 
     }
