@@ -1,8 +1,8 @@
-# SmartBase
+# BaseHub
 ![logo](pics/download.png)
 
 ## 🚀 介绍`
-一个功能强大的flink的异构数据处理平台。支持`mysql`,`redis`,`kafka`,`hdfs`,`hbase`等市面上大部分主流消息存储系统的多源异构数据转换，同时支持生成`CSV`，`TXT`等格式的处理结果。提供低代码的前端交互界面，通过配置方式上传任务至集群，通过平台可视化查看任务结果。
+SmartBase的进阶版本，支持更强大的任务处理功能。通过`源`，`目标`，`算子`组合成任意流式数据任务。
 
 ## 🍗 软件架构
 项目通过linux集群运行。包含三个`flink-core`，`Universal-pipe`，`smartBase-console`核心架构.
@@ -64,27 +64,16 @@
 
 ## 🍦 功能概要
 -  **目前支持的功能有**
-    - restful传参执行任务
-    - 可视化界面（部分）- 增删查任务，动态加载，用户上传，页面编辑
-    - `kafka`->`json`
-    - `kafka->`mysql`
-    - `mysql->`Java Class`
-    - `mysql->`kafka
-    - `mysql->`localhost`,`hdfs`(txt/csv) 
-    - 多`mysql`源->`mysql` 聚合同步
-    - `redis`->`localhost`,`hdfs`(txt/csv)
-    - 自定义端口数据固定格式传输：，目前支持","分割
-    - `port`->`mysql`
-    - `port`->`kafka`
-    - `port`->`redis`
-    - `port`->`localhost`,`hdfs`(txt/csv)
-    - 自定义端口数据自定义json传输：只需开启一个任务即可完成传输至任意数据源（通过配置json参数）
-    - `port`->`Any!`
+    - 源数据/目标数据：mysql，kafka，redis，port，csv，json
+    - 算子：
+        ![散算子](pics/OpratorPic/san.png)
+        ![合算子](pics/OpratorPic/he.png)
+        ![存算子](pics/OpratorPic/cun.png)
+        ![灭算子](pics/OpratorPic/mie.png)
+        ![计算子](pics/OpratorPic/ji.png)
+ 
 
-- **待实现的功能有**
-    - 自定义异构数据源传输
-    - `Hbase`支持
-    - 仪表盘
+
 
 
 ## 🍟 使用说明
