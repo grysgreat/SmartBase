@@ -1,8 +1,13 @@
 # BaseHub
 ![logo](pics/download.png)
 
+
+ —— 二十二年壬寅五月既望
+　　
+
 ## 🚀 介绍`
 SmartBase的进阶版本，支持更强大的任务处理功能。通过`源`，`目标`，`算子`组合成任意流式数据任务。
+
 
 ## 🍗 软件架构
 项目通过linux集群运行。包含三个`flink-core`，`Universal-pipe`，`smartBase-console`核心架构.
