@@ -66,11 +66,16 @@ SmartBase的进阶版本，支持更强大的任务处理功能。通过`源`，
 -  **目前支持的功能有**
     - 源数据/目标数据：mysql，kafka，redis，port，csv，json
     - 算子：
-        ![散算子](pics/OpratorPic/san.png)
-        ![合算子](pics/OpratorPic/he.png)
-        ![存算子](pics/OpratorPic/cun.png)
-        ![灭算子](pics/OpratorPic/mie.png)
-        ![计算子](pics/OpratorPic/ji.png)
+
+        1.散算子 ![散算子](pics/OpratorPic/san.png)
+
+        2.合算子 ![合算子](pics/OpratorPic/he.png)
+
+        3.存算子 ![存算子](pics/OpratorPic/cun.png)
+
+        4.灭算子 ![灭算子](pics/OpratorPic/mie.png)
+
+        5.计算子 ![计算子](pics/OpratorPic/ji.png)
  
 
 
