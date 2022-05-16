@@ -16,34 +16,58 @@ import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.runtime.state.filesystem.FsStateBackend;
+import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.streaming.connectors.redis.RedisSink;
 import org.apache.flink.streaming.connectors.redis.common.config.FlinkJedisPoolConfig;
+import org.apache.flink.util.Collector;
 
+import java.util.Date;
 import java.util.List;
 
 
-// {source:{[{type:"",sqltype:"",},]}}
+/**
+ * --jobJson {\"JobNum\":1,\"job1\":{\"source\":{\"type\":\"text\",\"url\":\"F:/tmp/test.csv\"},\"operator\":{\"num\":2,\"operator1\":{\"type\":\"OpFilt\",\"key\":\"star\"},\"operator2\":{\"type\":\"OpFilt\",\"key\":\"aaa\"}},\"dest\":{\"type\":\"mysql\",\"url\":\"192.168.10.1\",\"username\":\"root\",\"password\":\"123456\",\"basename\":\"sys\",\"tablename\":\"clicks\",\"port\":\"3306\"}}}  --saveUrl hdfs://hadoop102:8020/rng/ck
+ */
+
+
+
 public class JobController {
     public static void main(String[] args) throws Exception {
+
+
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
+
         ParameterHelper parameterHelper = new ParameterHelper(parameterTool);
+
+        //String parmJson = parameterHelper.getParmJson();
 
         StreamExecutionEnvironment executionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
 
+        System.out.println(parameterHelper.getSaveUrl());
+        // 1.1 设置CK&状态后端
+        executionEnvironment.setStateBackend(new FsStateBackend(parameterHelper.getSaveUrl()+"/tmplate"));
+        executionEnvironment.enableCheckpointing(5000L);
+        executionEnvironment.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
+        executionEnvironment.getCheckpointConfig().setCheckpointTimeout(10000L);
+        executionEnvironment.getCheckpointConfig().setMaxConcurrentCheckpoints(2);
+        executionEnvironment.getCheckpointConfig().setMinPauseBetweenCheckpoints(3000);
 
-        parameterHelper.setParmJson("{\"JobNum\":1,\"job1\":{\"source\":{\"type\":\"text\",\"url\":\"F:/tmp/test.csv\"},\"operator\":{\"num\":2,\"operator1\":{\"type\":\"OpFilt\",\"key\":\"star\"},\"operator2\":{\"type\":\"OpFilt\",\"key\":\"aaa\"}},\"dest\":{\"type\":\"mysql\",\"url\":\"192.168.10.1\",\"username\":\"root\",\"password\":\"123456\",\"basename\":\"sys\",\"tablename\":\"clicks\",\"port\":\"3306\"}}}");
 
+        parameterHelper.setParmJson(args[1]);
 
         String jsonPram = parameterHelper.getParmJson();
+
 
         JobPramUtil jobUtil = new JobPramUtil();
         jobUtil.addJobList(jsonPram);
 
-
+        Date alljobStartTime = new Date(System.currentTimeMillis());
 
 
         for (ParameterHelper jobPram : jobUtil.getJobList()) {
@@ -52,7 +76,23 @@ public class JobController {
 
             DataStreamSource<String> streamIn=new GetMySource().getSource(jobPram,executionEnvironment);
 
-            SingleOutputStreamOperator<String> stream = streamIn.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value));
+            SingleOutputStreamOperator<String> streamPre = streamIn.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value));
+
+            //stream.wait();
+
+
+            SingleOutputStreamOperator<String> stream = streamPre.process(new ProcessFunction<String, String>() {
+                @Override
+                public void processElement(String s, Context context, Collector<String> collector) throws Exception {
+                    Date nowTime = new Date(System.currentTimeMillis());
+                    int dt = (int) ((nowTime.getTime() - alljobStartTime.getTime()) / 1000);
+                    if (jobPram.getJobTime()==0){
+                        collector.collect(s);
+                    } else if (dt <= jobPram.getJobTime())
+                        collector.collect(s);
+                }
+            });
+
 
             List<OpratorsPram> opList = jobPram.getOpList();
 
@@ -73,6 +113,7 @@ public class JobController {
                     conf.setString("username",jobPram.getDestUserName());
                     conf.setString("password",jobPram.getDestUserPwd());
                     conf.setString("dburl",jobPram.getDestUrl()+":3306");
+
                     executionEnvironment.getConfig().setGlobalJobParameters(conf);
 
                     DataStream<String[]> sourceStream = stream.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value))
@@ -84,18 +125,19 @@ public class JobController {
                     break;
                 }
                 case "kafka": {
+
                     stream.addSink(KafkaProducer.getKafkaProducer(jobPram.getDestTopic(),jobPram.getDestUrl()+":"+jobPram.getDestPort()));
+
                     break;
                 }
                 case "redis":{
+
                     DataStream<Tuple2<String,String>> sourceStream = stream.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value))
                             .map((MapFunction<String, Tuple2<String,String>>) value -> {
                                 String[] args1 = value.split(","); //切割json
                                 Tuple2<String, String> tp = new Tuple2<String, String>(args1[0],args1[1]);
                                 return tp;
                             }).returns(new TypeHint<Tuple2<String,String>>() {});
-
-                    sourceStream.print();
 
                     // 创建一个到redis连接的配置
                     FlinkJedisPoolConfig conf = new FlinkJedisPoolConfig.Builder().setHost(jobPram.getDestUrl()).setPort(jobPram.getDestPort()).build();
@@ -111,17 +153,22 @@ public class JobController {
                     break;
                 }
                 case "text":{
+
                     stream.writeAsText(jobPram.getDestUrl());
+
                     break;
                 }
                 default:break;
             }
 
-
-
         }
 
+
+
+
         executionEnvironment.execute();
+
+
     }
 }
 

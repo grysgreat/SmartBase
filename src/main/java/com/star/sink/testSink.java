@@ -1,11 +1,20 @@
 package com.star.sink;
 
+import com.star.instance.MyOprator;
+import com.star.instance.OpratorsPram;
+import com.star.opretors.OperatorController;
+import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +31,26 @@ import java.util.Map;
  * 我们需要返回kv对的，就要考虑HashMap
  */
 public class testSink implements SourceFunction<HashMap<String,String>> {
+
+    public static void main(String[] args) throws Exception {
+        //流处理环境
+        StreamExecutionEnvironment see = StreamExecutionEnvironment.getExecutionEnvironment();
+        DataStreamSource<String> stringDataStreamSource = see.fromElements(new String("ads,aaa,aaa"), new String("azzz,zzz,zzz"), new String("aaa,ddd,vvv")
+        );
+
+        OperatorController operatorController = new OperatorController();
+        OpratorsPram opratorsPram = new OpratorsPram("OpMap","2,1");
+
+        operatorController.setNowOp(opratorsPram);
+        MyOprator op = operatorController.getOp();
+        SingleOutputStreamOperator<String> opOut = op.getOpOut(stringDataStreamSource);
+
+
+        opOut.print();
+        see.execute();
+    }
+
+
     private Logger logger= LoggerFactory.getLogger(testSink.class);
     private boolean isRunning =true;
     private Jedis jedis=null;

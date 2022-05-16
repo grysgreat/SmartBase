@@ -3,8 +3,10 @@ package com.star.instance;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class OpratorsPram {
+public class OpratorsPram implements Serializable {
     private String opType;
     private String key;
 

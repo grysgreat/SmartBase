@@ -3,6 +3,8 @@ package com.star.utils;
 import com.star.instance.OpratorsPram;
 import org.apache.flink.api.java.utils.ParameterTool;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ import java.util.List;
  */
 
 
-public class ParameterHelper {
+public class ParameterHelper implements Serializable {
 
 
     //参数json
@@ -25,7 +27,8 @@ public class ParameterHelper {
     private List<OpratorsPram> opList;
 
 
-
+    //任务执行开始时间
+    private int jobTime;
 
     //数据源ip
     private String sorceIp;
@@ -97,6 +100,13 @@ public class ParameterHelper {
         this.parmJson = parmJson;
     }
 
+    public int getJobTime() {
+        return jobTime;
+    }
+
+    public void setJobTime(int jobTime) {
+        this.jobTime = jobTime;
+    }
 
     //参数传递函数
     //TODO 传入一个 parameterTool ，返回helper参数类
@@ -110,6 +120,8 @@ public class ParameterHelper {
 
         if(parameterTool.get("destPort")!=null)
             this.destPort = Integer.parseInt(parameterTool.get("destPort"));
+
+        this.parmJson = parameterTool.get("jobJson");
 
         this.saveUrl=parameterTool.get("saveUrl");
 
@@ -128,6 +140,10 @@ public class ParameterHelper {
         this.destTopic = parameterTool.get("destTopic");
 
         this.pakage = parameterTool.get("pakage");
+
+        if(parameterTool.get("jobTime")!=null)
+            this.jobTime = Integer.parseInt(parameterTool.get("jobTime"));
+
     }
 
     @Override

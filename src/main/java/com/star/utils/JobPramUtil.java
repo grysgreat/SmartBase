@@ -30,6 +30,12 @@ public class JobPramUtil {
 
             String sourceType = source.get("type").getAsString();
 
+            if(jobi.get("jobTime")==null){
+                tmp.setJobTime(0);
+            }else {
+                tmp.setJobTime(Integer.parseInt(jobi.get("jobTime").getAsString()));
+            }
+
             tmp.setSorceType(sourceType);
 
             System.out.println(sourceType);
