@@ -82,9 +82,9 @@ SmartBase的进阶版本，支持更强大的任务处理功能。通过`源`，
 
         5.计算子 ![计算子](pics/OpratorPic/ji.png)
 
-        6.时算子 ![时算子](pics/OpratorPic/shi.png)
+        6.时算子 ![时算子](pics/shi.png)
  
-        7.映算子 ![映算子](pics/OpratorPic/ying.png)
+        7.映算子 ![映算子](pics/ying.png)
  
 
 
