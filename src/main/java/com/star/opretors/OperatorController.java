@@ -9,6 +9,9 @@ import com.star.opretors.transforms.OpMap;
 import lombok.Data;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +19,7 @@ import java.util.List;
 public class OperatorController {
     private OpratorsPram nowOp;
 
-    public MyOprator getOp(){
+    public MyOprator getOp() throws Exception {
         switch (nowOp.getOpType()){
             case "OpCount":{
                 return new OpCount();
@@ -41,6 +44,30 @@ public class OperatorController {
                 }
                 OpMap.setA(tmp);
                 return OpMap;
+            }
+            case "OpNew":{
+                //外部jar所在位置
+                /**
+                 * 样例参数
+                 * "file:F:\\tmp\\smart-base2\\BaseHub\\target\\BaseHub-1.0-SNAPSHOT-jar-with-dependencies.jar&com.star.opretors.transforms.OpCount";
+                 */
+
+                String parm = nowOp.getKey();
+
+                String[] args1 = parm.split("&"); //切割json
+
+                URLClassLoader urlClassLoader =null;
+                Class<?> MyTest = null;
+
+                //通过URLClassLoader加载外部jar
+                urlClassLoader = new URLClassLoader(new URL[]{new URL(args1[0])});
+                //获取外部jar里面的具体类对象
+                MyTest = urlClassLoader.loadClass(args1[1]);
+                //创建对象实例
+                MyOprator instance = (MyOprator)MyTest.newInstance();
+
+                return instance;
+
             }
             default: break;
         }

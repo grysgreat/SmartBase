@@ -40,7 +40,6 @@ import java.util.List;
 public class JobController {
     public static void main(String[] args) throws Exception {
 
-
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
 
         ParameterHelper parameterHelper = new ParameterHelper(parameterTool);
@@ -49,7 +48,6 @@ public class JobController {
 
         StreamExecutionEnvironment executionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        System.out.println(parameterHelper.getSaveUrl());
         // 1.1 设置CK&状态后端
         executionEnvironment.setStateBackend(new FsStateBackend(parameterHelper.getSaveUrl()+"/tmplate"));
         executionEnvironment.enableCheckpointing(5000L);

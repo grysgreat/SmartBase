@@ -28,7 +28,7 @@ public class JobPramUtil {
 
             JsonObject source = jobi.get("source").getAsJsonObject();
 
-            String sourceType = source.get("type").getAsString();
+            String sourceType = source.get("types").getAsString();
 
             if(jobi.get("jobTime")==null){
                 tmp.setJobTime(0);
@@ -38,7 +38,6 @@ public class JobPramUtil {
 
             tmp.setSorceType(sourceType);
 
-            System.out.println(sourceType);
 
             switch(sourceType) {
                 case "mysql":
@@ -79,9 +78,9 @@ public class JobPramUtil {
             List<OpratorsPram> tmpOps=new ArrayList<>();
             JsonObject ops = jobi.get("operator").getAsJsonObject();
             int opNum=Integer.parseInt(ops.get("num").toString());
-            System.out.println(opNum);
+
+
             for (int j = 1; j <= opNum; j++) {
-                System.out.println("operator" + j);
                 JsonObject opi = ops.get("operator"+j).getAsJsonObject();
                 String opType=opi.get("type").getAsString();
                 String opKey=opi.get("key").getAsString();
@@ -92,7 +91,7 @@ public class JobPramUtil {
 
 
             JsonObject dest = jobi.get("dest").getAsJsonObject();
-            String destType = dest.get("type").getAsString() ;
+            String destType = dest.get("types").getAsString() ;
             tmp.setDestType(destType);
             switch(destType) {
                 case "mysql": {
@@ -128,7 +127,6 @@ public class JobPramUtil {
                 default: break;
             }
             jobList.add(tmp);
-            System.out.println("in"+jobList);
         }
     }
 
