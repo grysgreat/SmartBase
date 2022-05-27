@@ -7,7 +7,9 @@ import java.io.Serializable;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * @author star
+ */
 public class MysqlTableUtil implements Serializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(MysqlTableUtil.class);
     private static final String DRIVER = "com.mysql.jdbc.Driver";

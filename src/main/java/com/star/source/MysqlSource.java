@@ -8,7 +8,9 @@ import com.star.model.MysqlRawDataDeserialization;
 import lombok.Data;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-
+/**
+ * @author star
+ */
 @Data
 public class MysqlSource implements MySource<String>{
     private String URL;
@@ -34,6 +36,7 @@ public class MysqlSource implements MySource<String>{
     public DataStreamSource<String> getSource(StreamExecutionEnvironment env) throws Exception {
 
         if(dest.equals("mysql")){
+
             sourceFunction = MySQLSource.<String>builder()
                     .hostname(URL)
                     .serverTimeZone("GMT")

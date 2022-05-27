@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class OpMap implements MyOprator, Serializable {
+public class OpMap implements MyOprator<String>, Serializable {
     private List<Integer> a;
     @Override
     public SingleOutputStreamOperator<String> getOpOut(SingleOutputStreamOperator<String> stream){

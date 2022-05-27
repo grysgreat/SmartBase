@@ -8,7 +8,9 @@ import com.star.model.KafkaProducer;
 import lombok.Data;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-
+/**
+ * @author star
+ */
 @Data
 public class KafkaSource implements MySource<String>{
     private String url;

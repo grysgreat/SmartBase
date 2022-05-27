@@ -1,5 +1,7 @@
 package com.star.utils;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.star.instance.OpratorsPram;
@@ -11,26 +13,16 @@ import java.util.List;
  * @author star
  */
 @Data
-public class JobPramUtil {
+public class TestUtil {
     private List<ParameterHelper> jobList = new ArrayList<>();
 
     public void addJobList(String jobJson){
-        //创建json解析器
-        JsonParser parse = new JsonParser();
-        JsonObject json = (JsonObject) parse.parse(jobJson);
-        //json字符串解析,获取result节点
+        JsonArray array = new JsonParser().parse(jobJson).getAsJsonArray();
 
-        int jobNum=Integer.parseInt(json.get("JobNum").toString());
-
-
-        for(int i=1;i<=jobNum;i++){
+        for (int i = 0; i < array.size(); i++) {
             ParameterHelper tmp=new ParameterHelper();
 
-            JsonObject jobi = json.get("job"+i).getAsJsonObject();
-
-            JsonObject source = jobi.get("source").getAsJsonObject();
-
-            String sourceType = source.get("types").getAsString();
+            JsonObject jobi = array.get(i).getAsJsonObject();
 
             if(jobi.get("jobTime")==null){
                 tmp.setJobTime(0);
@@ -38,13 +30,17 @@ public class JobPramUtil {
                 tmp.setJobTime(Integer.parseInt(jobi.get("jobTime").getAsString()));
             }
 
+
+
+            JsonObject source = jobi.get("source").getAsJsonObject();
+            System.out.println(source);
+
+            String sourceType = source.get("types").getAsString();
             tmp.setSorceType(sourceType);
-
-
             switch(sourceType) {
                 case "mysql":
                     tmp.setSorceIp(source.get("url").getAsString());
-                    tmp.setSorcePort(Integer.parseInt(source.get("port").getAsString()));
+                    tmp.setSorcePort(source.get("port").getAsInt());
                     tmp.setSorceUserName(source.get("username").getAsString());
                     tmp.setSorceUserPwd(source.get("password").getAsString());
                     tmp.setSorceBase(source.get("basename").getAsString());
@@ -55,17 +51,17 @@ public class JobPramUtil {
                 case "kafka":
                     tmp.setSorceIp(source.get("url").getAsString());
                     tmp.setSourceTable(source.get("topic").getAsString());
-                    tmp.setSorcePort(Integer.parseInt(source.get("port").getAsString()));
+                    tmp.setSorcePort(source.get("port").getAsInt());
                     break;
 
                 case "port":
                     tmp.setSorceIp(source.get("url").getAsString());
-                    tmp.setSorcePort(Integer.parseInt(source.get("port").getAsString()));
+                    tmp.setSorcePort(source.get("port").getAsInt());
                     break;
 
                 case "redis":
                     tmp.setSorceIp(source.get("url").getAsString());
-                    tmp.setSorcePort(Integer.parseInt(source.get("port").getAsString()));
+                    tmp.setSorcePort(source.get("port").getAsInt());
                     tmp.setSourceTable(source.get("topic").getAsString());
                     break;
 
@@ -76,29 +72,26 @@ public class JobPramUtil {
                 default: break;
             }
 
-
             List<OpratorsPram> tmpOps=new ArrayList<>();
-            JsonObject ops = jobi.get("operator").getAsJsonObject();
-            int opNum=Integer.parseInt(ops.get("num").toString());
-
-
-            for (int j = 1; j <= opNum; j++) {
-                JsonObject opi = ops.get("operator"+j).getAsJsonObject();
+            JsonArray ops=jobi.getAsJsonArray("operators");
+            for (int j = 0; j < ops.size(); j++) {
+                JsonObject opi = ops.get(j).getAsJsonObject();
                 String opType=opi.get("type").getAsString();
                 String opKey=opi.get("key").getAsString();
 
                 tmpOps.add(new OpratorsPram(opType,opKey));
+
             }
             tmp.setOpList(tmpOps);
 
-
             JsonObject dest = jobi.get("dest").getAsJsonObject();
-            String destType = dest.get("types").getAsString() ;
+
+            String destType = dest.get("types").getAsString();
             tmp.setDestType(destType);
             switch(destType) {
                 case "mysql": {
                     tmp.setDestUrl(dest.get("url").getAsString());
-                    tmp.setDestPort(Integer.parseInt(dest.get("port").getAsString()));
+                    tmp.setDestPort(dest.get("port").getAsInt());
                     tmp.setDestUserName(dest.get("username").getAsString());
                     tmp.setDestUserPwd(dest.get("password").getAsString());
                     tmp.setDestBase(dest.get("basename").getAsString());
@@ -108,17 +101,17 @@ public class JobPramUtil {
                 case "kafka":{
                     tmp.setDestUrl(dest.get("url").getAsString());
                     tmp.setDestTopic(dest.get("topic").getAsString());
-                    tmp.setDestPort(Integer.parseInt(dest.get("port").getAsString()));
+                    tmp.setDestPort(dest.get("port").getAsInt());
                     break;
                 }
                 case "port":{
                     tmp.setDestUrl(dest.get("url").getAsString());
-                    tmp.setDestPort(Integer.parseInt(dest.get("port").getAsString()));
+                    tmp.setDestPort(dest.get("port").getAsInt());
                     break;
                 }
                 case "redis":{
                     tmp.setDestUrl(dest.get("url").getAsString());
-                    tmp.setDestPort(Integer.parseInt(dest.get("port").getAsString()));
+                    tmp.setDestPort(dest.get("port").getAsInt());
                     tmp.setDestTopic(dest.get("topic").getAsString());
                     break;
                 }
@@ -129,7 +122,9 @@ public class JobPramUtil {
                 default: break;
             }
             jobList.add(tmp);
+
         }
+
     }
 
 }

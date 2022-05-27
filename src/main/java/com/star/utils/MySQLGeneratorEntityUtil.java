@@ -9,7 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.*;
 
-
+/**
+ * @author star
+ */
 public class MySQLGeneratorEntityUtil {
     //表名
     private String tableName;

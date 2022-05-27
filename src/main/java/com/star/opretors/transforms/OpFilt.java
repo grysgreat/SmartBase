@@ -14,7 +14,7 @@ import org.apache.flink.util.Collector;
 import java.io.Serializable;
 
 @Data
-public class OpFilt implements MyOprator, Serializable {
+public class OpFilt implements MyOprator<String>, Serializable {
     private String key;
     private StringKmpUtil kmpUtil;
     @Override

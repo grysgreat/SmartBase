@@ -2,12 +2,10 @@ package com.star.opretors;
 
 import com.star.instance.MyOprator;
 import com.star.instance.OpratorsPram;
-import com.star.opretors.transforms.OpCount;
-import com.star.opretors.transforms.OpFilt;
-import com.star.opretors.transforms.OpKill;
-import com.star.opretors.transforms.OpMap;
+import com.star.opretors.transforms.*;
 import lombok.Data;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -18,7 +16,10 @@ import java.util.List;
 @Data
 public class OperatorController {
     private OpratorsPram nowOp;
-
+    static {
+        // This method can be called at most once in a given JVM.
+        URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
+    }
     public MyOprator getOp() throws Exception {
         switch (nowOp.getOpType()){
             case "OpCount":{
@@ -45,6 +46,11 @@ public class OperatorController {
                 OpMap.setA(tmp);
                 return OpMap;
             }
+            case "OpTime":{
+                OpTime OpTime = new OpTime();
+                OpTime.setKey(Integer.parseInt(nowOp.getKey()));
+                return OpTime;
+            }
             case "OpNew":{
                 //外部jar所在位置
                 /**
@@ -60,7 +66,8 @@ public class OperatorController {
                 Class<?> MyTest = null;
 
                 //通过URLClassLoader加载外部jar
-                urlClassLoader = new URLClassLoader(new URL[]{new URL(args1[0])});
+                //hdfs://hadoop102:8020/jars/  file://E:/tmp/NewOpTest/target/"+args1[0]
+                urlClassLoader = new URLClassLoader(new URL[]{new URL("hdfs:hadoop102:8020/jars/"+args1[0])});
                 //获取外部jar里面的具体类对象
                 MyTest = urlClassLoader.loadClass(args1[1]);
                 //创建对象实例

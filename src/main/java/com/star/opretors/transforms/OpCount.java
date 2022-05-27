@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.util.Collector;
 
-public class OpCount implements MyOprator {
+public class OpCount implements MyOprator<String> {
     @Override
     public SingleOutputStreamOperator<String> getOpOut(SingleOutputStreamOperator<String> steam){
 

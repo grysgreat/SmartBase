@@ -6,12 +6,19 @@ import com.star.utils.ParameterHelper;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-public class GetMySource {
+public class GetMySource<T> {
     private DataStreamSource<String> source;
+    private DataStreamSource<T> spSource;
+
+    private DataStreamSource<T> getSpSource(ParameterHelper para, StreamExecutionEnvironment env) throws Exception {
+
+
+
+        return spSource;
+    }
+
 
     public DataStreamSource<String> getSource(ParameterHelper para, StreamExecutionEnvironment env) throws Exception {
-
-
         switch (para.getSorceType()){
             case "mysql":{
                 MysqlSource mysqlSource = new MysqlSource(
@@ -45,6 +52,12 @@ public class GetMySource {
             case "text":{
                 TextSource textSource = new TextSource(para.getSorceIp());
                 source=textSource.getSource(env);
+                break;
+            }
+            case "hbase":{
+                //TODO family未确定
+                HbaseSource hbaseSource = new HbaseSource(para.getSorceIp(),para.getSorcePort()+"",para.getSorceBase(),para.getSourceTable(),"family");
+                source=hbaseSource.getSource(env);
                 break;
             }
         }

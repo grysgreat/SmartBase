@@ -23,6 +23,19 @@
             - OpKill：去除含有key的流
             - OpMap：将源数据中字段映射到目标数据中"x1,y1,z1"——为目标数据中第下标个字段对应为源数据中的第几个
             - OpNew：自定义算子：key为"自定义算子jar包地址&自定义算子全类名"
+                - 自定义算子写法：在自己的算子项目中添加com.star.instance.MyOpreator.java接口类,代码如下,然后在自己写的算子类中继承这个接口即可.
+
+```java
+package com.star.instance;
+
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+
+public interface MyOprator {
+    public SingleOutputStreamOperator<String> getOpOut(SingleOutputStreamOperator<String> steam);
+}
+
+```
+
     
     
 

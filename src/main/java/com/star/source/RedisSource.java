@@ -7,7 +7,9 @@ import com.star.model.MyRedisSource;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.redis.common.config.FlinkJedisPoolConfig;
-
+/**
+ * @author star
+ */
 public class RedisSource implements MySource<String> {
     private String url;
     private int port;

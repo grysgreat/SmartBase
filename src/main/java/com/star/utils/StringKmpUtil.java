@@ -1,7 +1,9 @@
 package com.star.utils;
 
 import java.io.Serializable;
-
+/**
+ * @author star
+ */
 public class StringKmpUtil implements Serializable {
     /**
      * O(m+n)

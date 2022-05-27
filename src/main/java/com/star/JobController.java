@@ -9,6 +9,7 @@ import com.star.opretors.mapper.MyRedisMapper;
 import com.star.sink.MysqlSink;
 import com.star.utils.JobPramUtil;
 import com.star.utils.ParameterHelper;
+import com.star.utils.TestUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.MapFunction;
@@ -35,12 +36,15 @@ import java.util.List;
  * --jobJson {\"JobNum\":1,\"job1\":{\"source\":{\"type\":\"text\",\"url\":\"F:/tmp/test.csv\"},\"operator\":{\"num\":2,\"operator1\":{\"type\":\"OpFilt\",\"key\":\"star\"},\"operator2\":{\"type\":\"OpFilt\",\"key\":\"aaa\"}},\"dest\":{\"type\":\"mysql\",\"url\":\"192.168.10.1\",\"username\":\"root\",\"password\":\"123456\",\"basename\":\"sys\",\"tablename\":\"clicks\",\"port\":\"3306\"}}}  --saveUrl hdfs://hadoop102:8020/rng/ck
  */
 
+//test: [{"operators":[{"type":"timer","key":"15"},{"type":"OpKill","key":"123"}],"source":{"types":"kafka","id":19,"url":"hadoop102","port":9092,"topic":"kfkSQL"},"dest":{"types":"kafka","id":19,"url":"hadoop102","destPort":9092,"topic":"kfkPort"}}]
 
 
 public class JobController {
     public static void main(String[] args) throws Exception {
 
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
+
+
 
         ParameterHelper parameterHelper = new ParameterHelper(parameterTool);
 
@@ -61,11 +65,12 @@ public class JobController {
 
         String jsonPram = parameterHelper.getParmJson();
 
+        TestUtil jobUtil = new TestUtil();
 
-        JobPramUtil jobUtil = new JobPramUtil();
+
+
         jobUtil.addJobList(jsonPram);
 
-        Date alljobStartTime = new Date(System.currentTimeMillis());
 
 
         for (ParameterHelper jobPram : jobUtil.getJobList()) {
@@ -74,22 +79,7 @@ public class JobController {
 
             DataStreamSource<String> streamIn=new GetMySource().getSource(jobPram,executionEnvironment);
 
-            SingleOutputStreamOperator<String> streamPre = streamIn.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value));
-
-            //stream.wait();
-
-
-            SingleOutputStreamOperator<String> stream = streamPre.process(new ProcessFunction<String, String>() {
-                @Override
-                public void processElement(String s, Context context, Collector<String> collector) throws Exception {
-                    Date nowTime = new Date(System.currentTimeMillis());
-                    int dt = (int) ((nowTime.getTime() - alljobStartTime.getTime()) / 1000);
-                    if (jobPram.getJobTime()==0){
-                        collector.collect(s);
-                    } else if (dt <= jobPram.getJobTime())
-                        collector.collect(s);
-                }
-            });
+            SingleOutputStreamOperator<String> stream = streamIn.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value));
 
 
             List<OpratorsPram> opList = jobPram.getOpList();
@@ -101,6 +91,7 @@ public class JobController {
                 MyOprator op = operatorController.getOp();
                 stream=op.getOpOut(stream);
             }
+
 
             String dest=jobPram.getDestType();
             switch (dest){
@@ -151,9 +142,7 @@ public class JobController {
                     break;
                 }
                 case "text":{
-
                     stream.writeAsText(jobPram.getDestUrl());
-
                     break;
                 }
                 default:break;

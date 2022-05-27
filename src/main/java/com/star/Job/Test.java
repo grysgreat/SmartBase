@@ -3,6 +3,9 @@ package com.star.Job;
 import com.star.instance.MyOprator;
 import com.star.instance.OpratorsPram;
 import com.star.opretors.OperatorController;
+import com.star.utils.JobPramUtil;
+import com.star.utils.ParameterHelper;
+import com.star.utils.TestUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -10,26 +13,28 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import java.net.MalformedURLException;
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Test {
 
+ private String a;
+
     public static void main(String[] args) throws Exception {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        StreamExecutionEnvironment executionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        DataStream<String> stream = env.socketTextStream("hadoop102",7777);
+        ParameterHelper parameterHelper = new ParameterHelper();
+        parameterHelper.setSorceIp("file:E:/tmp/NewOpTest/target/OPnew.jar&com.TestSource");
+        parameterHelper.setDestUrl("file:E:/tmp/NewOpTest/target/OPnew.jar&com.TestSink");
 
-        SingleOutputStreamOperator<String> streamPre = stream.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value));
+        List<OpratorsPram> opList = new ArrayList<>();
+        parameterHelper.setOpList(opList);
 
+        SpJob<Object> objectSpJob = new SpJob<>();
+        objectSpJob.dispose(executionEnvironment,parameterHelper);
 
-        OpratorsPram opP = new OpratorsPram("OpNew", "file:F:/tmp/smart-base2/BaseHub/target/BaseHub-1.0-SNAPSHOT-jar-with-dependencies.jar&com.star.opretors.transforms.OpCount");
-        OperatorController operatorController = new OperatorController();
-        operatorController.setNowOp(opP);
-        MyOprator op = operatorController.getOp();
-
-        streamPre=op.getOpOut(streamPre);
-        streamPre.print();
-        env.execute();
+        executionEnvironment.execute();
     }
+
 }

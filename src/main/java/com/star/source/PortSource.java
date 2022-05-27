@@ -3,7 +3,9 @@ package com.star.source;
 import com.star.model.KafkaProducer;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-
+/**
+ * @author star
+ */
 public class PortSource implements MySource<String>{
     private String url;
     private int port;
