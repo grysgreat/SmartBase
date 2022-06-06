@@ -1,6 +1,7 @@
 package com.star;
 
 import com.star.Job.GetMySource;
+import com.star.Job.SpJob;
 import com.star.instance.MyOprator;
 import com.star.instance.OpratorsPram;
 import com.star.model.KafkaProducer;
@@ -38,9 +39,10 @@ import java.util.List;
 
 //test: [{"operators":[{"type":"timer","key":"15"},{"type":"OpKill","key":"123"}],"source":{"types":"kafka","id":19,"url":"hadoop102","port":9092,"topic":"kfkSQL"},"dest":{"types":"kafka","id":19,"url":"hadoop102","destPort":9092,"topic":"kfkPort"}}]
 
-
+// --jobJson [{\"operators\":[{\"type\":\"OpTime\",\"key\":\"15\"},{\"type\":\"OpKill\",\"key\":\"123\"}],\"source\":{\"types\":\"kafka\",\"id\":19,\"url\":\"hadoop102\",\"port\":9092,\"topic\":\"kfkSQL\"},\"dest\":{\"types\":\"kafka\",\"id\":19,\"url\":\"hadoop102\",\"port\":9092,\"topic\":\"kfkPort\"}}]  --saveUrl hdfs://hadoop102:8020/rng/ck
 public class JobController {
     public static void main(String[] args) throws Exception {
+
 
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
 
@@ -76,6 +78,12 @@ public class JobController {
         for (ParameterHelper jobPram : jobUtil.getJobList()) {
 
             System.out.println("-------------here   "+jobPram);
+            if(jobPram.getSorceType().equals("MySource")) {
+                SpJob<Object> objectSpJob = new SpJob<>();
+                objectSpJob.dispose(executionEnvironment,jobPram);
+                System.out.println("1111");
+                continue;
+            }
 
             DataStreamSource<String> streamIn=new GetMySource().getSource(jobPram,executionEnvironment);
 

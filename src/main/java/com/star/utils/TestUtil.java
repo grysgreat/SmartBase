@@ -68,7 +68,8 @@ public class TestUtil {
                 case "text":
                     tmp.setSorceIp(source.get("url").getAsString());
                     break;
-
+                case "MySource":
+                    tmp.setSorceIp(source.get("url").getAsString());
                 default: break;
             }
 
@@ -119,7 +120,10 @@ public class TestUtil {
                     tmp.setDestUrl(dest.get("url").getAsString());
                     break;
                 }
-                default: break;
+                default: {
+                    tmp.setDestUrl(dest.get("url").getAsString());
+                    break;
+                }
             }
             jobList.add(tmp);
 
