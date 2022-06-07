@@ -130,7 +130,6 @@ public class MySQLGeneratorEntityUtil {
      * @param pk
      */
     private void processEntityHelper(StringBuffer sb,String pk) {
-        sb.append("\t@Override\r\n");
         sb.append("\tpublic String getPrimaryKey() {\r\n");
         sb.append("\t\treturn \""+pk+"\";\r\n");
         sb.append("\t}\r\n");
