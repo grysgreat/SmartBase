@@ -44,9 +44,7 @@ public class JobController {
     public static void main(String[] args) throws Exception {
 
 
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-
-
+    ParameterTool parameterTool = ParameterTool.fromArgs(args);
 
         ParameterHelper parameterHelper = new ParameterHelper(parameterTool);
 
@@ -81,11 +79,13 @@ public class JobController {
             if(jobPram.getSorceType().equals("MySource")) {
                 SpJob<Object> objectSpJob = new SpJob<>();
                 objectSpJob.dispose(executionEnvironment,jobPram);
-                System.out.println("1111");
                 continue;
             }
 
             DataStreamSource<String> streamIn=new GetMySource().getSource(jobPram,executionEnvironment);
+            streamIn.print();
+
+
 
             SingleOutputStreamOperator<String> stream = streamIn.filter((FilterFunction<String>) value -> StringUtils.isNotBlank(value));
 
@@ -150,12 +150,12 @@ public class JobController {
                     break;
                 }
                 case "text":{
-                    stream.writeAsText(jobPram.getDestUrl());
+                    stream.writeAsText(jobPram.getDestUrl()).setParallelism(1);
                     break;
                 }
                 default:break;
             }
-
+            stream.print(": ");
         }
 
 

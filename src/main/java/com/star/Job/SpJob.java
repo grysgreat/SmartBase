@@ -34,6 +34,9 @@ public class SpJob<T> {
 
 
         DataStreamSource<T> streamIn = instance.getSource(env);
+        streamIn.print();
+
+
         SingleOutputStreamOperator<T> stream = streamIn.filter((FilterFunction<T>) value -> StringUtils.isNotBlank(value.toString()));
 
 
@@ -62,5 +65,8 @@ public class SpJob<T> {
         MySink<T> sinkClass = (MySink<T>)MySink.newInstance();
 
         sinkClass.addMySink(env,stream);
+
+        stream.print();
+
     }
 }

@@ -8,15 +8,6 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 public class GetMySource<T> {
     private DataStreamSource<String> source;
-    private DataStreamSource<T> spSource;
-
-    private DataStreamSource<T> getSpSource(ParameterHelper para, StreamExecutionEnvironment env) throws Exception {
-
-
-
-        return spSource;
-    }
-
 
     public DataStreamSource<String> getSource(ParameterHelper para, StreamExecutionEnvironment env) throws Exception {
         switch (para.getSorceType()){
@@ -63,6 +54,9 @@ public class GetMySource<T> {
         }
         return source;
     }
-
+    private DataStreamSource<T> spSource;
+    private DataStreamSource<T> getSpSource(ParameterHelper para, StreamExecutionEnvironment env) throws Exception {
+        return spSource;
+    }
 
 }
