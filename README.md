@@ -105,11 +105,18 @@ SmartBase的进阶版本，支持更强大的任务处理功能。通过`源`，
   ./yarn-session.sh -nm test -d
   ```
 
+2.docker
+```
+链接: https://pan.baidu.com/s/1Vk0nalAkdWixWvNyKVoMlA?pwd=1x9p 提取码: 1x9p 复制这段内容后打开百度网盘手机App，操作更方便哦 
+```
+
 
 ## 🍍 开发者说明
 -  **模块配置** 
     1.  [Flink内部传参文档](docs/Parameter.md)
-    1.  [ApiFox请求接口文档](docs/interfaceTest.md)
+    2.  [ApiFox请求接口文档](docs/interfaceTest.md)
+-  **用户自定义模板代码**
+    1.  [下载地址](https://gitee.com/StarGrys/smart-base/tree/UserCodes/)
 
 
 ## 🍇 参与贡献
