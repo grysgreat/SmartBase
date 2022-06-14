@@ -105,6 +105,11 @@ SmartBase的进阶版本，支持更强大的任务处理功能。通过`源`，
   ./yarn-session.sh -nm test -d
   ```
 
+2.docker
+```
+链接: https://pan.baidu.com/s/1Vk0nalAkdWixWvNyKVoMlA?pwd=1x9p 提取码: 1x9p 复制这段内容后打开百度网盘手机App，操作更方便哦 
+```
+
 
 ## 🍍 开发者说明
 -  **模块配置** 
