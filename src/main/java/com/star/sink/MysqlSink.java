@@ -28,6 +28,8 @@ public class MysqlSink extends
     private String dburl = "jdbc:mysql://localhost:3306";
     private String tableName = "clicks";
     private String baseName = "test1";
+    int cnt=0;
+
 
     private List<String> ColumnNames;
     private List<String> ColumnTypes;
@@ -38,6 +40,7 @@ public class MysqlSink extends
 
     @Override
     public void open(Configuration parameters) throws Exception {
+
         super.open(parameters);
         //获取全局变量 也就是
         ExecutionConfig.GlobalJobParameters globalParams = getRuntimeContext().getExecutionConfig().getGlobalJobParameters();
@@ -67,6 +70,8 @@ public class MysqlSink extends
 
     @Override
     public void invoke(String[] value) throws Exception {
+        cnt++;
+
         Class.forName(drivername);
         String tupleName="(";
         String unKown="(";
@@ -83,8 +88,7 @@ public class MysqlSink extends
 
         this.preparedStatement = this.connection.prepareStatement(sql);
 
-        System.out.println(ColumnTypes);
-
+        System.out.println("当前序列："+cnt+"    ||    "+"处理类型"+ColumnTypes);
 
         for (int i = 0; i < value.length; i++) {
             System.out.println(value[i]);
@@ -103,6 +107,9 @@ public class MysqlSink extends
 
     @Override
     public void close() throws Exception {
+        System.out.println(cnt);
+
+
         if (this.preparedStatement != null) {
             this.preparedStatement.close();
         }

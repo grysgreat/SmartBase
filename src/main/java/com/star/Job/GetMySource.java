@@ -51,6 +51,12 @@ public class GetMySource<T> {
                 source=hbaseSource.getSource(env);
                 break;
             }
+
+            case "modbus":{
+                ModBusSource modBusSource = new ModBusSource(para.getSorceIp(),para.getSorcePort());
+                source=modBusSource.getSource(env);
+                break;
+            }
         }
         return source;
     }

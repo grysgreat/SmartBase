@@ -44,7 +44,8 @@ public class JobController {
     public static void main(String[] args) throws Exception {
 
 
-    ParameterTool parameterTool = ParameterTool.fromArgs(args);
+
+        ParameterTool parameterTool = ParameterTool.fromArgs(args);
 
         ParameterHelper parameterHelper = new ParameterHelper(parameterTool);
 
@@ -61,7 +62,25 @@ public class JobController {
         executionEnvironment.getCheckpointConfig().setMinPauseBetweenCheckpoints(3000);
 
 
-        parameterHelper.setParmJson(args[1]);
+        System.out.println(args[1]);
+        String str = args[1];
+
+        str = str.replaceAll("[{]", "{\"");
+        str = str.replaceAll(":", "\":\"");
+        str = str.replaceAll(",", "\",\"");
+        str = str.replaceAll("}", "\"}");
+        str = str.replaceAll("}\",\"[{]", "},{");
+        str = str.replaceAll("\"[{]", "{");
+        str = str.replaceAll("}\"", "}");
+        str = str.replaceAll("]\"", "]");
+        str = str.replaceAll("\"\\[", "[");
+        str = str.replaceAll("\":\"/", "[");
+        str = str.replaceAll("!\":\"!", ":");
+
+        System.out.println(str);
+        parameterHelper.setParmJson(str);
+
+
 
         String jsonPram = parameterHelper.getParmJson();
 

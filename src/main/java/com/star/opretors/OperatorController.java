@@ -18,7 +18,7 @@ public class OperatorController {
     private OpratorsPram nowOp;
     static {
         // This method can be called at most once in a given JVM.
-        URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
+        //URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
     }
     public MyOprator getOp() throws Exception {
         switch (nowOp.getOpType()){
@@ -38,7 +38,7 @@ public class OperatorController {
             case "OpMap":{
                 OpMap OpMap = new OpMap();
                 String str=nowOp.getKey();
-                String[] split = str.split(",");
+                String[] split = str.split("!");
                 List<Integer> tmp = new ArrayList<>();
                 for (String s : split) {
                     tmp.add(Integer.parseInt(s));

@@ -12,16 +12,16 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-public class Test<T> {
+public class Test2<T> {
 
- private String a;
+    private String a;
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment executionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
         RtspSource rtspSource = new RtspSource("rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4");
         DataStreamSource source=rtspSource.getSource(executionEnvironment);
 
-        source.addSink(new VedioPlaySink());
+        source.addSink(new FrameSink("/pics"));
 
         executionEnvironment.execute();
     }
