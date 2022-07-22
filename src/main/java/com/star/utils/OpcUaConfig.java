@@ -12,20 +12,20 @@ public class OpcUaConfig implements Serializable {
     //是否为匿名登录，匿名登录则为true，反之为false
     private Boolean isAnonymous;
     //数据标识符
-    private String id;
+    private String identifier;
 
-    public OpcUaConfig(String serverUrl, Boolean isAnonymous, String id) {
+    public OpcUaConfig(String serverUrl, Boolean isAnonymous, String identifier) {
         this.serverUrl = serverUrl;
         this.isAnonymous = isAnonymous;
-        this.id = id;
+        this.identifier = identifier;
     }
 
-    public OpcUaConfig(String serverUrl, String userName, String password, Boolean isAnonymous, String id) {
+    public OpcUaConfig(String serverUrl, String userName, String password, Boolean isAnonymous, String identifier) {
         this.serverUrl = serverUrl;
         this.userName = userName;
         this.password = password;
         this.isAnonymous = isAnonymous;
-        this.id = id;
+        this.identifier = identifier;
     }
 
     public String getServerUrl() {
@@ -60,11 +60,11 @@ public class OpcUaConfig implements Serializable {
         isAnonymous = anonymous;
     }
 
-    public String getId() {
-        return id;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }

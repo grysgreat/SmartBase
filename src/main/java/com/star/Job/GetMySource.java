@@ -53,9 +53,9 @@ public class GetMySource<T> {
             }
 
             case "modbus":{
-                ModBusSource modBusSource = new ModBusSource(para.getSorceIp(),para.getSorcePort());
-                source=modBusSource.getSource(env);
-                break;
+               // ModBusSource modBusSource = new ModBusSource(para.getSorceIp(),para.getSorcePort());
+                //source=modBusSource.getSource(env);
+                //break;
             }
         }
         return source;

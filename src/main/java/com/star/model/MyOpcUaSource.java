@@ -43,7 +43,7 @@ public class MyOpcUaSource extends RichSourceFunction<Map<String,DataValue>> {
         uaNodes = opcUaOperationSupport.browseNode(opcClient,null,new ArrayList<>());
         for(UaNode node:uaNodes){
             String nodeId = node.getNodeId().getIdentifier().toString();
-            if(nodeId.equals(opcUaConfig.getId())){
+            if(nodeId.equals(opcUaConfig.getIdentifier())){
                 NODE = node;
                 break;
             }

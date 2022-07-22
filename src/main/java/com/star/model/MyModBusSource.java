@@ -1,5 +1,7 @@
 package com.star.model;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.serotonin.modbus4j.BatchRead;
 import com.serotonin.modbus4j.BatchResults;
 import com.serotonin.modbus4j.ModbusFactory;
@@ -10,17 +12,22 @@ import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
 import com.serotonin.modbus4j.ip.IpParameters;
 import com.serotonin.modbus4j.locator.BaseLocator;
+import com.star.utils.ModbusConfig;
+import com.star.utils.ModbusData;
 import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
+
+import java.util.List;
 
 
 public class MyModBusSource extends RichSourceFunction<String> {
 
-    private String ip;
-    private int port=502;
 
-    public MyModBusSource(String url, int port) {
-        this.ip = url;
-        this.port = port;
+
+    private ModbusConfig modbusConfig;
+
+
+    public MyModBusSource(ModbusConfig modbusConfig) {
+        this.modbusConfig = modbusConfig;
     }
 
     /**
@@ -41,9 +48,9 @@ public class MyModBusSource extends RichSourceFunction<String> {
     public  ModbusMaster getMaster() throws ModbusInitException {
         IpParameters params = new IpParameters();
         //获取的host，需用户填写，默认为localhost
-        params.setHost(ip);
+        params.setHost(modbusConfig.getUrl());
         //获取的端口，需用户填写，默认为502
-        params.setPort(port);
+        params.setPort(modbusConfig.getPort());
         //
         // modbusFactory.createRtuMaster(wapper); //RTU 协议
         // modbusFactory.createUdpMaster(params);//UDP 协议
@@ -128,6 +135,8 @@ public class MyModBusSource extends RichSourceFunction<String> {
         int size_data=10;//给出数据对数量
 //      设置数据一组为（type，slaveid，offset，datatype），当type为01或02时不需要datatype，在前端默认给一个值就可以，不会识别
 
+        List<ModbusData> modbusData = new Gson().fromJson(modbusConfig.getData(), new TypeToken<List<ModbusData>>(){}.getType());
+        size_data = modbusData.size();
         int []type=new int[size_data];//设置类型（01,02,03,04），需用户填写
         int []slaveid=new int[size_data];//设置slaveid，需用户填写
         int []offset=new int[size_data];//设置读取寄存器位置,需用户填写
@@ -148,10 +157,9 @@ public class MyModBusSource extends RichSourceFunction<String> {
         //读取数据
         for(int i=0;i<size_data;i++)
         {
-            if(type[i]==1)
-            {
+            if(modbusData.get(i).getDatatype()==1){
                 try {
-                    v_01[size_01]=readCoilStatus(slaveid[i],offset[i]);
+                    v_01[size_01]=readCoilStatus( modbusData.get(i).getSlave_id(),modbusData.get(i).getOffset());
                 } catch (ModbusTransportException e) {
                     e.printStackTrace();
                 } catch (ErrorResponseException e) {
@@ -161,10 +169,10 @@ public class MyModBusSource extends RichSourceFunction<String> {
                 }
                 size_01++;
             }
-            else if(type[i]==2)
+            else if(modbusData.get(i).getDatatype()==2)
             {
                 try {
-                    v_02[size_02]=readInputStatus(slaveid[i],offset[i]);
+                    v_02[size_02]=readInputStatus(modbusData.get(i).getSlave_id(),modbusData.get(i).getOffset());
                 } catch (ModbusTransportException e) {
                     e.printStackTrace();
                 } catch (ErrorResponseException e) {
@@ -174,9 +182,9 @@ public class MyModBusSource extends RichSourceFunction<String> {
                 }
                 size_02++;
             }
-            else if(type[i]==3){
+            else if(modbusData.get(i).getDatatype()==3){
                 try {
-                    v_03[size_03]=readHoldingRegister(slaveid[i],offset[i],datatype[i]);
+                    v_03[size_03]=readHoldingRegister(modbusData.get(i).getSlave_id(),modbusData.get(i).getOffset(),modbusData.get(i).getDatatype());
                 } catch (ModbusTransportException e) {
                     e.printStackTrace();
                 } catch (ErrorResponseException e) {
@@ -186,9 +194,9 @@ public class MyModBusSource extends RichSourceFunction<String> {
                 }
                 size_03++;
             }
-            else if(type[i]==4){
+            else if(modbusData.get(i).getDatatype()==4){
                 try {
-                    v_04[size_04]=readInputRegisters(slaveid[i],offset[i],datatype[i]);
+                    v_04[size_04]=readInputRegisters(modbusData.get(i).getSlave_id(),modbusData.get(i).getOffset(),modbusData.get(i).getDatatype());
                 } catch (ModbusTransportException e) {
                     e.printStackTrace();
                 } catch (ErrorResponseException e) {
