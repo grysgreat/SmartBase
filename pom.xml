@@ -243,6 +243,17 @@
             <artifactId>dictionary-manager</artifactId>
             <version>${milo-version}</version>
         </dependency>
+
+        <!--添加的本地的外部jar包依赖-->
+        <dependency>
+            <groupId>modbus</groupId>
+            <artifactId>modbus</artifactId>
+            <version>0.0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/jars/modbus4j-3.0.3.jar</systemPath>
+        </dependency>
+
+
     </dependencies>
 
     <build>
