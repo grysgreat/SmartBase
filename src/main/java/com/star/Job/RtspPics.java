@@ -28,7 +28,7 @@ public class RtspPics{
         RtspSource rtspSource = new RtspSource(sorceIp);
         DataStreamSource source=rtspSource.getSource(executionEnvironment);
 
-        source.addSink(new FrameSink("/pics"));
+        source.addSink(new FrameSink("/pics/"));
 
         executionEnvironment.execute();
     }

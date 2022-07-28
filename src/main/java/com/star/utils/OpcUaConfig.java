@@ -2,6 +2,7 @@ package com.star.utils;
 
 import java.io.Serializable;
 
+
 public class OpcUaConfig implements Serializable {
     //服务器地址
     private String serverUrl = "opc.tcp://127.0.0.1:49320";
@@ -66,5 +67,16 @@ public class OpcUaConfig implements Serializable {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    @Override
+    public String toString() {
+        return "OpcUaConfig{" +
+                "serverUrl='" + serverUrl + '\'' +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", isAnonymous=" + isAnonymous +
+                ", identifier='" + identifier + '\'' +
+                '}';
     }
 }

@@ -1,6 +1,7 @@
 package com.star.Job;
 
 import com.google.gson.Gson;
+import com.star.model.FakeSinkFunc;
 import com.star.sink.FrameSink;
 import com.star.source.ModBusSource;
 import com.star.source.RtmpSource;
@@ -12,18 +13,29 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 public class Modbus {
 
+
+
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment executionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
 
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
 
-        String sorceIp =  parameterTool.get("sorceIp");
+        String str =  parameterTool.get("config");
 
-        Integer port = Integer.parseInt(parameterTool.get("sorcePort"));
+        str = str.replaceAll("[{]", "{\"");
+        str = str.replaceAll(":", "\":\"");
+        str = str.replaceAll(",", "\",\"");
+        str = str.replaceAll("}", "\"}");
+        str = str.replaceAll("}\",\"[{]", "},{");
+        str = str.replaceAll("\"[{]", "{");
+        str = str.replaceAll("}\"", "}");
+        str = str.replaceAll("]\"", "]");
+        str = str.replaceAll("\"\\[", "[");
+        str = str.replaceAll("\":\"/", "[");
+        str = str.replaceAll("!\":\"!", ":");
 
-        String mdConfig =  parameterTool.get("config");
 
-        ModbusConfig modbusConfig = new Gson().fromJson(mdConfig,ModbusConfig.class);
+        ModbusConfig modbusConfig = new Gson().fromJson(str,ModbusConfig.class);
 
 
 

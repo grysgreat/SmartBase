@@ -14,38 +14,26 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 import java.util.Map;
 
-public class OpcUa {
+public class DOpcUa {
 
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment executionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
 
-
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
 
-        String str =  parameterTool.get("config");
+        String serverUrl =  parameterTool.get("url");
 
-        str = str.replaceAll("[{]", "{\"");
-        str = str.replaceAll(":", "\":\"");
-        str = str.replaceAll(",", "\",\"");
-        str = str.replaceAll("}", "\"}");
-        str = str.replaceAll("}\",\"[{]", "},{");
-        str = str.replaceAll("\"[{]", "{");
-        str = str.replaceAll("}\"", "}");
-        str = str.replaceAll("]\"", "]");
-        str = str.replaceAll("\"\\[", "[");
-        str = str.replaceAll("\":\"/", "[");
-        str = str.replaceAll("!\":\"!", ":");
+        String username =  parameterTool.get("username");
+
+        String password =  parameterTool.get("password");
+
+        Boolean isck = Boolean.getBoolean(parameterTool.get("is"));
+
+        String identify =  parameterTool.get("identify");
 
 
-        str=str.replaceAll("maohao",":");
-
-        System.out.println(str);
-        OpcUaConfig opcUaConfig = new Gson().fromJson(str,OpcUaConfig.class);
-
-        opcUaConfig.setServerUrl("opc.tcp://"+opcUaConfig.getServerUrl());
-
-
+        OpcUaConfig opcUaConfig = new OpcUaConfig(serverUrl,username,password,isck,identify);
 
         System.out.println(opcUaConfig);
 

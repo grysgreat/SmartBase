@@ -136,6 +136,8 @@ public class MyModBusSource extends RichSourceFunction<String> {
 //      设置数据一组为（type，slaveid，offset，datatype），当type为01或02时不需要datatype，在前端默认给一个值就可以，不会识别
 
         List<ModbusData> modbusData = new Gson().fromJson(modbusConfig.getData(), new TypeToken<List<ModbusData>>(){}.getType());
+
+        System.out.println(modbusData);
         size_data = modbusData.size();
         int []type=new int[size_data];//设置类型（01,02,03,04），需用户填写
         int []slaveid=new int[size_data];//设置slaveid，需用户填写
@@ -157,7 +159,7 @@ public class MyModBusSource extends RichSourceFunction<String> {
         //读取数据
         for(int i=0;i<size_data;i++)
         {
-            if(modbusData.get(i).getDatatype()==1){
+            if(modbusData.get(i).getType()==1){
                 try {
                     v_01[size_01]=readCoilStatus( modbusData.get(i).getSlave_id(),modbusData.get(i).getOffset());
                 } catch (ModbusTransportException e) {
@@ -169,7 +171,7 @@ public class MyModBusSource extends RichSourceFunction<String> {
                 }
                 size_01++;
             }
-            else if(modbusData.get(i).getDatatype()==2)
+            else if(modbusData.get(i).getType()==2)
             {
                 try {
                     v_02[size_02]=readInputStatus(modbusData.get(i).getSlave_id(),modbusData.get(i).getOffset());
@@ -182,7 +184,7 @@ public class MyModBusSource extends RichSourceFunction<String> {
                 }
                 size_02++;
             }
-            else if(modbusData.get(i).getDatatype()==3){
+            else if(modbusData.get(i).getType()==3){
                 try {
                     v_03[size_03]=readHoldingRegister(modbusData.get(i).getSlave_id(),modbusData.get(i).getOffset(),modbusData.get(i).getDatatype());
                 } catch (ModbusTransportException e) {
@@ -194,7 +196,7 @@ public class MyModBusSource extends RichSourceFunction<String> {
                 }
                 size_03++;
             }
-            else if(modbusData.get(i).getDatatype()==4){
+            else if(modbusData.get(i).getType()==4){
                 try {
                     v_04[size_04]=readInputRegisters(modbusData.get(i).getSlave_id(),modbusData.get(i).getOffset(),modbusData.get(i).getDatatype());
                 } catch (ModbusTransportException e) {

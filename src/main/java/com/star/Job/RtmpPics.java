@@ -29,7 +29,7 @@ public class RtmpPics<T> {
 
         DataStreamSource source=rtmpPics.getSource(executionEnvironment);
 
-        source.addSink(new FrameSink("/pics"));
+        source.addSink(new FrameSink("/pics/"));
 
         executionEnvironment.execute();
     }
